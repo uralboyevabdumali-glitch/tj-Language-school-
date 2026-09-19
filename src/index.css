@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-white font-sans text-navy-800 antialiased; }
+  h1, h2, h3, h4 { @apply font-display font-semibold text-navy-900; text-wrap: balance; }
+  :focus-visible { @apply outline-none ring-2 ring-electric-500 ring-offset-2; }
+  ::selection { @apply bg-electric-600 text-white; }
+  summary::-webkit-details-marker { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+}
+
+@layer components {
+  .container-tj { @apply mx-auto w-full max-w-[76rem] px-5 sm:px-8; }
+  .section { @apply py-20 sm:py-28; }
+
+  .eyebrow { @apply inline-flex items-center gap-2 rounded-full border border-electric-200 bg-electric-50 px-3.5 py-1.5 text-sm font-medium text-electric-700; }
+  .eyebrow-dark { @apply inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-electric-100 backdrop-blur; }
+
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[.95rem] font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-primary { @apply btn bg-action-gradient text-white shadow-glow hover:-translate-y-0.5 hover:shadow-lift; }
+  .btn-secondary { @apply btn border border-navy-200 bg-white text-navy-800 hover:border-electric-300 hover:bg-electric-50; }
+  .btn-light { @apply btn border border-white/20 bg-white/10 text-white backdrop-blur hover:bg-white/20; }
+  .btn-danger { @apply btn bg-rose-600 text-white hover:bg-rose-700; }
+  .btn-sm { @apply px-4 py-2 text-sm; }
+
+  .card { @apply rounded-card border border-navy-100 bg-white shadow-soft; }
+  .glass { @apply rounded-card border border-white/15 bg-white/10 backdrop-blur-xl; }
+  .badge { @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold; }
+
+  .label { @apply mb-1.5 block text-sm font-medium text-navy-700; }
+  .input { @apply w-full rounded-xl border border-navy-200 bg-white px-4 py-3 text-navy-900 placeholder:text-navy-300 transition focus:border-electric-500 focus:ring-2 focus:ring-electric-200; }
+  .input-error { @apply border-rose-400 focus:border-rose-500 focus:ring-rose-200; }
+
+  /* Dashboard sidebar link */
+  .nav-item { @apply flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-navy-200/80 transition hover:bg-white/10 hover:text-white; }
+  .nav-item-active { @apply bg-action-gradient text-white shadow-glow; }
+
+  .reveal { @apply opacity-0 translate-y-5 transition-all duration-700 ease-out; }
+  .reveal-in { @apply opacity-100 translate-y-0; }
+}
+
+.scroll-slim::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll-slim::-webkit-scrollbar-thumb { background: #AEBEE9; border-radius: 999px; }
+
+/* ------------------------------------------------------------------
+   Reduced motion
+   Some people get motion sickness from movement on screen, and the OS
+   setting is how they tell us. Honour it everywhere rather than in one
+   component: transitions collapse to something instant but still visible.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Premium polish
+   ------------------------------------------------------------------ */
+
+/* A faint lit edge on glass panels, so they read as glass rather than
+   as a flat translucent rectangle. */
+.glow-ring {
+  position: relative;
+}
+.glow-ring::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 45%, rgba(96, 150, 250, 0.35));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Slow sheen across the primary call to action. Pure decoration, so it is
+   switched off under prefers-reduced-motion below. */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  animation: sheen 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sheen {
+  0%, 65% { transform: translateX(-120%); }
+  100%    { transform: translateX(120%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::after { animation: none; display: none; }
+}
