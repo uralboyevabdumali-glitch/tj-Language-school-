@@ -80,6 +80,18 @@ npm run seed -- --empty     # admin account + courses + landing page, no demo pe
 npm run build               # production build into dist/
 ```
 
+## Deploy on Vercel
+
+The site and the API go up together. Vercel builds the Vite app and runs Express
+as a serverless function at `/api`.
+
+1. Push the repo (including `server/db.json` — create it with `npm run seed` if it is missing).
+2. Import the project on Vercel. Framework preset: **Vite**. Build command: `npm run build`. Output: `dist`.
+3. Optional: set `JWT_SECRET` in Project → Settings → Environment Variables.
+
+Writes on Vercel live in the function’s `/tmp` folder, so demo data can reset when a
+new instance starts. Local `npm run dev` still uses `server/db.json` as before.
+
 ## Demo accounts
 
 | Role | Email | Password |

@@ -8,7 +8,8 @@
     "dev": "concurrently -n API,WEB -c blue,magenta \"npm run server\" \"vite\"",
     "server": "node server/server.js",
     "seed": "node server/seed.js",
-    "build": "vite build",
+    "export-landing": "node tools/export-landing.mjs",
+    "build": "node tools/export-landing.mjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -29,15 +29,40 @@ import path from 'path';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { fileURLToPath } from 'url';
+import { publicLanding } from './publicLanding.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = path.join(__dirname, 'db.json');
+const ON_VERCEL = Boolean(process.env.VERCEL);
+const BUNDLED_DB_PATH = path.join(__dirname, 'db.json');
+// Vercel’s function filesystem is read-only except /tmp, so writes go there.
+const DB_PATH = ON_VERCEL ? path.join('/tmp', 'tj-language-school-db.json') : BUNDLED_DB_PATH;
 const PORT = process.env.PORT || 4000;
 const JWT_SECRET = process.env.JWT_SECRET || 'tj-language-school-dev-secret';
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
+
+// A rewrite to /api (or /api/index.js) can drop the rest of the path. Put it back
+// so /api/landing still matches the Express routes below.
+app.use((req, _res, next) => {
+  if (!ON_VERCEL) return next();
+  const invokePath = req.headers['x-invoke-path'];
+  if (typeof invokePath === 'string' && invokePath.startsWith('/api/') && !invokePath.startsWith('/api/index')) {
+    const query = (req.url || '').includes('?') ? (req.url || '').slice((req.url || '').indexOf('?')) : '';
+    req.url = invokePath + query;
+    return next();
+  }
+  const current = req.url || '';
+  if (current.startsWith('/api/index.js')) {
+    req.url = `/api${current.slice('/api/index.js'.length) || ''}`;
+  } else if (current.startsWith('/api/index')) {
+    req.url = `/api${current.slice('/api/index'.length) || ''}`;
+  } else if (!current.startsWith('/api')) {
+    req.url = `/api${current.startsWith('/') ? current : `/${current}`}`;
+  }
+  next();
+});
 
 /* ==========================================================================
    1. DATABASE HELPERS
@@ -46,12 +71,34 @@ app.use(express.json({ limit: '5mb' }));
 let db = null;
 let writeQueue = Promise.resolve();
 
+async function readDbFile() {
+  try {
+    return JSON.parse(await fs.readFile(DB_PATH, 'utf8'));
+  } catch (error) {
+    if (ON_VERCEL) {
+      return JSON.parse(await fs.readFile(BUNDLED_DB_PATH, 'utf8'));
+    }
+    throw error;
+  }
+}
+
+async function persistDb() {
+  const tmp = `${DB_PATH}.tmp`;
+  try {
+    await fs.writeFile(tmp, JSON.stringify(db, null, 2), 'utf8');
+    await fs.rename(tmp, DB_PATH);
+  } catch (error) {
+    if (!ON_VERCEL) throw error;
+    console.warn('Could not persist db.json on this instance:', error.message);
+  }
+}
+
 async function loadDb() {
   if (!db) {
-    db = JSON.parse(await fs.readFile(DB_PATH, 'utf8'));
+    db = await readDbFile();
     // Top up any collection this version added. Existing rows are never touched.
     if (ensureCollections(db)) {
-      await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
+      await persistDb();
       console.log('  db.json upgraded with the new collections (existing data kept).');
     }
   }
@@ -63,9 +110,7 @@ function saveDb(change) {
   const run = writeQueue.then(async () => {
     const data = await loadDb();
     const result = await change(data);
-    const tmp = `${DB_PATH}.tmp`;
-    await fs.writeFile(tmp, JSON.stringify(data, null, 2), 'utf8');
-    await fs.rename(tmp, DB_PATH);
+    await persistDb();
     return result;
   });
   writeQueue = run.catch(() => {});
@@ -973,56 +1018,8 @@ app.delete('/api/notifications/:id', requireAuth, async (req, res) => {
    hard-coded in React. The admin edits one section at a time.
    ========================================================================== */
 
-const isVisible = (item) => item.visible !== false;
-
 app.get('/api/landing', async (req, res) => {
-  const data = await loadDb();
-  const page = data.landingPage;
-
-  res.json({
-    ...page,
-    nav: page.nav.filter(isVisible),
-    stats: page.stats.filter(isVisible),
-    benefits: page.benefits.filter(isVisible),
-    steps: page.steps.filter(isVisible),
-    faq: page.faq.filter(isVisible),
-    // Course cards carry figures worked out from real records: how many
-    // students are actually enrolled, how many sessions a week the schedule
-    // implies, and the average rating of that course's lessons. A rating is
-    // only sent once reviews exist — no placeholder star counts.
-    courses: data.courses.filter((c) => isVisible(c) && c.showOnSite !== false).map((course) => {
-      const groupIds = data.groups.filter((g) => g.courseId === course.id).map((g) => g.id);
-      const reviews = (data.lessonReviews ?? []).filter((r) => groupIds.includes(r.groupId));
-      return {
-        ...course,
-        studentsCount: data.students.filter((st) => st.courseId === course.id && st.status === 'active').length,
-        lessonsPerWeek: String(course.schedule ?? '').split('/').filter((part) => part.trim()).length || null,
-        rating: reviews.length ? Number(average(reviews.map((r) => r.rating)).toFixed(1)) : null,
-        reviewCount: reviews.length,
-        teachers: [...new Set(data.groups.filter((g) => g.courseId === course.id).map((g) => g.teacherName).filter(Boolean))],
-      };
-    }),
-    teachers: data.teachers
-      .filter((t) => isVisible(t) && t.showOnSite !== false && t.status === 'active')
-      .map(({ email, phone, ...rest }) => {
-        const reviews = (data.lessonReviews ?? []).filter((r) => r.teacherId === rest.id);
-        return {
-          ...rest,
-          studentsCount: data.students.filter((st) => (rest.groups ?? []).includes(st.groupId)).length,
-          rating: reviews.length ? Number(average(reviews.map((r) => r.rating)).toFixed(1)) : null,
-          reviewCount: reviews.length,
-        };
-      }), // contact details stay internal
-    results: data.ieltsResults.filter((r) => isVisible(r) && r.featured),
-    testimonials: data.testimonials.filter(isVisible),
-    events: data.events.filter(isVisible),
-    branches: (data.branches ?? []).filter(isVisible).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
-    media: (data.mediaPosts ?? []).filter(isVisible).sort((a, b) => String(b.date ?? '').localeCompare(String(a.date ?? ''))),
-    announcements: (data.announcements ?? [])
-      .filter((a) => isVisible(a) && (a.audience?.kind ?? 'all') === 'all')
-      .slice(-3),
-    settings: data.websiteSettings ?? {},
-  });
+  res.json(publicLanding(await loadDb()));
 });
 
 /** Site-wide settings (brand, social links, section headings). */
@@ -2259,9 +2256,16 @@ app.get('/api/health', async (req, res) => {
 
 app.use('/api', (req, res) => res.status(404).json({ message: `No route for ${req.method} ${req.originalUrl}` }));
 
-loadDb()
-  .then(() => app.listen(PORT, () => console.log(`\n  TJ Language School API → http://localhost:${PORT}/api\n`)))
-  .catch((error) => {
-    console.error('Could not read server/db.json. Run "npm run seed" first.\n', error.message);
-    process.exit(1);
-  });
+export default app;
+
+const invokedAsMain = process.argv[1]
+  && path.normalize(path.resolve(process.argv[1])) === path.normalize(fileURLToPath(import.meta.url));
+
+if (invokedAsMain) {
+  loadDb()
+    .then(() => app.listen(PORT, () => console.log(`\n  TJ Language School API → http://localhost:${PORT}/api\n`)))
+    .catch((error) => {
+      console.error('Could not read server/db.json. Run "npm run seed" first.\n', error.message);
+      process.exit(1);
+    });
+}

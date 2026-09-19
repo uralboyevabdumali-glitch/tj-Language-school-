@@ -56,6 +56,19 @@ import { LanguageProvider, useLanguage, LANGUAGES, DEFAULT_LANGUAGE as DEFAULT_L
 
 const api = axios.create({ baseURL: '/api' });
 
+/** Public homepage: live API first, then the static snapshot Vercel always ships. */
+async function loadPublicLanding() {
+  try {
+    const { data } = await api.get('/landing');
+    if (data?.hero && data?.nav) return data;
+  } catch {
+    /* API is missing on static hosts — use the snapshot instead. */
+  }
+  const response = await fetch('/landing.json');
+  if (!response.ok) throw new Error('Serverga ulanib bo\u2018lmadi.');
+  return response.json();
+}
+
 const tokenStore = {
   get: () => localStorage.getItem('tj.token'),
   set: (token) => localStorage.setItem('tj.token', token),
@@ -599,7 +612,7 @@ function CountUp({ value, decimals = 0 }) {
 }
 
 function LandingPage() {
-  const { data: page, loading, error } = useFetch(() => api.get('/landing').then((r) => r.data));
+  const { data: page, loading, error } = useFetch(() => loadPublicLanding());
   const { isAuthenticated, role } = useAuth();
   const { t, language } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);

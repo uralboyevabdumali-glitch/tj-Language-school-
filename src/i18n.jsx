@@ -184,7 +184,7 @@ const dictionary = {
     checkRequest:       { uz: 'Arizamni tekshirish', ru: 'Проверить заявку', en: 'Check my request' },
     demoNotice:         { uz: 'Saytdagi o\u2018quvchi va natija ma\u2019lumotlari namunaviy.', ru: 'Данные учеников и результатов на сайте — демонстрационные.', en: 'Student and result data shown on this site is demo content.' },
     apiDown:            { uz: 'Server ishlamayapti', ru: 'Сервер не запущен', en: 'The API is not running' },
-    apiDownHint:        { uz: 'npm run dev buyrug\u2018i bilan ishga tushiring va server/db.json mavjudligiga ishonch hosil qiling.', ru: 'Запустите npm run dev и убедитесь, что server/db.json существует.', en: 'Start it with npm run dev and make sure server/db.json exists.' },
+    apiDownHint:        { uz: 'Lokalda npm run dev ni ishga tushiring. Vercel\u2018da esa oxirgi deploy muvaffaqiyatli bo\u2018lganini tekshiring.', ru: 'Локально запустите npm run dev. На Vercel проверьте, что последний деплой прошёл успешно.', en: 'Locally run npm run dev. On Vercel, check that the latest deploy succeeded.' },
     // branches
     branchesEyebrow:    { uz: 'Filiallar',      ru: 'Филиалы',          en: 'Branches' },
     branchesTitle:      { uz: 'Olmaliqdagi uchta filialimiz', ru: 'Три наших филиала в Алмалыке', en: 'Our three branches in Olmaliq' },
