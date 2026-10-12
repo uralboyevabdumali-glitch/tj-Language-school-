@@ -31,11 +31,11 @@
   .btn-sm { @apply px-4 py-2 text-sm; }
 
   /* Public landing page buttons */
-  .btn-sun { @apply btn bg-sun text-ink hover:-translate-y-0.5 hover:bg-[#ffdc5c]; }
-  .btn-coral { @apply btn bg-coral text-ink hover:-translate-y-0.5 hover:bg-[#ff825f]; }
-  .btn-ink { @apply btn bg-ink text-white hover:-translate-y-0.5 hover:bg-ink-2; }
-  .btn-outline-light { @apply btn border-2 border-white/80 text-white hover:border-sun hover:text-sun; }
-  .input-dark { @apply w-full rounded-xl border border-white/20 bg-ink px-4 py-3 text-white placeholder:text-white/35 transition focus:border-sun focus:outline-none focus:ring-2 focus:ring-sun/30; }
+  .btn-sun { @apply btn bg-[#FFD43B] text-[#13132B] hover:-translate-y-0.5 hover:bg-[#ffdc5c]; }
+  .btn-coral { @apply btn bg-[#FF6B45] text-[#13132B] hover:-translate-y-0.5 hover:bg-[#ff825f]; }
+  .btn-ink { @apply btn bg-[#13132B] text-white hover:-translate-y-0.5 hover:bg-[#1F1F47]; }
+  .btn-outline-light { @apply btn border-2 border-white/80 text-white hover:border-[#FFD43B] hover:text-[#FFD43B]; }
+  .input-dark { @apply w-full rounded-xl border border-white/20 bg-[#13132B] px-4 py-3 text-white placeholder:text-white/35 transition focus:border-[#FFD43B] focus:outline-none focus:ring-2 focus:ring-[#FFD43B]/30; }
 
   .card { @apply rounded-card border border-navy-100 bg-white shadow-soft; }
   .glass { @apply rounded-card border border-white/15 bg-white/10 backdrop-blur-xl; }
