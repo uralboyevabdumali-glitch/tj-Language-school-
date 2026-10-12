@@ -611,6 +611,28 @@ function CountUp({ value, decimals = 0 }) {
   return <span ref={ref}>{shown.toFixed(decimals)}</span>;
 }
 
+/** The big hero word: "salom" in a new language every 1.6 seconds, each in its own colour. */
+const HERO_GREETINGS = [
+  ['Salom', 'var(--cream)'], ['Hello', 'var(--yellow)'], ['Привет', 'var(--coral)'], ['안녕하세요', 'var(--mint)'],
+  ['Merhaba', 'var(--yellow)'], ['Hallo', 'var(--coral)'], ['مرحبا', 'var(--violet)'],
+];
+
+function GreetingCycler() {
+  const reduced = useReducedMotion();
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (reduced) return undefined;
+    const timer = setInterval(() => setIndex((value) => (value + 1) % HERO_GREETINGS.length), 1600);
+    return () => clearInterval(timer);
+  }, [reduced]);
+  const [word, color] = HERO_GREETINGS[index];
+  return (
+    <p className="lp-hero-word" aria-hidden="true">
+      <span key={index} className="lp-pop" style={{ color }}>{word}</span>
+    </p>
+  );
+}
+
 function LandingPage() {
   const { data: page, loading, error } = useFetch(() => loadPublicLanding());
   const { isAuthenticated, role } = useAuth();
@@ -677,7 +699,7 @@ function LandingPage() {
   const courseCode = (name = '') =>
     name.split(/\s+/).filter(Boolean).map((word) => word[0]).join('').slice(0, 2).toUpperCase();
 
-  // The hero title splits at its first full stop: the first half white, the rest coral.
+  // The hero title splits at its first full stop: the first half cream, the rest coral.
   const heroTitle = c(page.hero, 'title') ?? '';
   const splitAt = heroTitle.indexOf('. ');
   const [titleLead, titleTail] = splitAt > 0
@@ -694,36 +716,32 @@ function LandingPage() {
   const greetings = ['Hello', 'Привет', '안녕하세요', 'Merhaba', 'Hallo', 'Salom', 'Bonjour', 'مرحبا', 'Hola', 'Ciao'];
   const ribbonWords = page.benefits.map((benefit) => c(benefit, 'title'));
   const [headStat, ...restStats] = page.stats;
-  const benefitTones = ['bg-coral text-ink', 'border-2 border-ink bg-white text-ink', 'bg-sun text-ink', 'border-2 border-ink bg-white text-ink'];
-
-  const sectionTitle = 'font-heavy text-[2.25rem] leading-[1.05] sm:text-[3.25rem]';
+  const benefitTones = ['lp-tone-coral', 'lp-tone-white', 'lp-tone-yellow', 'lp-tone-white'];
 
   return (
-    <div className="landing flex min-h-screen flex-col overflow-x-clip bg-ink font-body text-white">
+    <div className="landing flex min-h-screen flex-col">
       {/* ---------- NAVBAR ---------- */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
-        <div className="container-tj flex h-[4.5rem] items-center justify-between gap-6">
+      <header className="lp-header">
+        <div className="lp-wrap flex h-[4.75rem] items-center justify-between gap-6">
           <a href="#top" className="flex min-w-0 items-center gap-3 whitespace-nowrap">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sun font-heavy text-sm text-ink">TJ</span>
-            <span className="truncate font-heavy text-xs uppercase tracking-wide text-white sm:text-sm">{page.settings?.brandName || 'TJ Language School'}</span>
+            <span className="lp-logo">TJ</span>
+            <span className="truncate font-heavy text-xs uppercase tracking-wide sm:text-sm">{page.settings?.brandName || 'TJ Language School'}</span>
           </a>
 
           <nav aria-label={t('msg.mainNav')} className="hidden items-center xl:flex">
             {page.nav.map((item) => (
-              <a key={item.id} href={item.href} className="whitespace-nowrap rounded-full px-2.5 py-2 text-sm text-white/75 transition hover:text-sun">
-                {c(item, 'label')}
-              </a>
+              <a key={item.id} href={item.href} className="lp-navlink">{c(item, 'label')}</a>
             ))}
           </nav>
 
           <div className="hidden shrink-0 items-center gap-3 whitespace-nowrap xl:flex">
             <LanguageSwitcher tone="dark" />
             {isAuthenticated ? (
-              <Link to={DASHBOARD_HOME[role]} className="btn-sun btn-sm"><LayoutDashboard size={16} />{t('nav.dashboard')}</Link>
+              <Link to={DASHBOARD_HOME[role]} className="lp-btn lp-btn-yellow lp-btn-sm"><LayoutDashboard size={16} />{t('nav.dashboard')}</Link>
             ) : (
               <>
-                <Link to="/login" className="text-sm font-semibold text-white/80 transition hover:text-white">{t('nav.login')}</Link>
-                <a href="#contact" className="btn-sun btn-sm">{t('landing.freeLesson')}</a>
+                <Link to="/login" className="lp-navlink font-bold">{t('nav.login')}</Link>
+                <a href="#contact" className="lp-btn lp-btn-yellow lp-btn-sm">{t('landing.freeLesson')}</a>
               </>
             )}
           </div>
@@ -732,22 +750,22 @@ function LandingPage() {
             <LanguageSwitcher tone="dark" compact />
             <button type="button" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen}
               aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
-              className="rounded-xl border border-white/20 p-2.5 text-white">
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-[color:var(--line)] text-[color:var(--cream)]">
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
 
         {menuOpen && (
-          <div className="border-t border-white/10 bg-ink xl:hidden">
-            <nav aria-label={t('msg.mobileNav')} className="container-tj flex flex-col gap-1 py-5">
+          <div className="border-t border-[color:var(--line)] bg-[color:var(--ink)] xl:hidden">
+            <nav aria-label={t('msg.mobileNav')} className="lp-wrap flex flex-col gap-1 py-5">
               {page.nav.map((item) => (
                 <a key={item.id} href={item.href} onClick={() => setMenuOpen(false)}
-                  className="rounded-xl px-3 py-3 font-medium text-white/85 hover:bg-white/5">{c(item, 'label')}</a>
+                  className="rounded-2xl px-3 py-3 font-bold text-[color:var(--cream)] hover:bg-[color:var(--ink-2)]">{c(item, 'label')}</a>
               ))}
               <div className="mt-3 grid grid-cols-2 gap-3">
-                <Link to="/login" className="btn-outline-light">{t('nav.login')}</Link>
-                <Link to="/register" className="btn-sun">{t('nav.register')}</Link>
+                <Link to="/login" className="lp-btn lp-btn-ghost">{t('nav.login')}</Link>
+                <Link to="/register" className="lp-btn lp-btn-yellow">{t('nav.register')}</Link>
               </div>
             </nav>
           </div>
@@ -756,78 +774,73 @@ function LandingPage() {
 
       <main id="top" className="w-full min-w-0">
         {/* ---------- HERO ---------- */}
-        <section className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20">
-          <div className="container-tj relative">
+        <section className="relative overflow-hidden pb-14 pt-14 sm:pb-20 sm:pt-20">
+          <div className="lp-wrap relative">
             {/* Rotating "first lesson free" seal, links to the sign-up form. */}
-            <a href="#contact" aria-label={t('landing.freeSeal')}
-              className="absolute right-5 top-0 hidden h-36 w-36 items-center justify-center sm:right-8 md:flex">
-              <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full animate-spin-slow text-sun" aria-hidden="true">
+            <a href="#contact" aria-label={t('landing.freeSeal')} className="lp-seal">
+              <svg viewBox="0 0 100 100" className="lp-seal-ring" aria-hidden="true">
                 <defs><path id="seal-circle" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" /></defs>
-                <text fill="currentColor" className="font-heavy" fontSize="9" textLength="234" lengthAdjust="spacing">
+                <text fill="currentColor" fontSize="9" textLength="234" lengthAdjust="spacing" style={{ fontFamily: 'Unbounded, sans-serif', fontWeight: 800 }}>
                   <textPath href="#seal-circle">{`${t('landing.freeSeal').toUpperCase()} • `}</textPath>
                 </text>
               </svg>
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-sun text-ink transition hover:scale-110">
-                <ArrowUpRight size={20} />
-              </span>
+              <span className="lp-seal-dot"><ArrowUpRight size={22} /></span>
             </a>
 
             <Reveal>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{c(page.hero, 'eyebrow')}</p>
-              <p className="mt-6 font-heavy text-[5.5rem] leading-[0.9] text-sun sm:text-[9rem] lg:text-[11rem]" lang="en">Hello</p>
-              <h1 className="mt-4 max-w-4xl font-heavy text-[2rem] leading-[1.1] text-white sm:text-[3.25rem]">
-                {titleLead}{titleTail && <> <span className="text-coral">{titleTail}</span></>}
+              <p className="lp-eyebrow">{c(page.hero, 'eyebrow')}</p>
+              <GreetingCycler />
+              <h1 className="lp-hero-title">
+                {titleLead}{titleTail && <> <span className="text-[color:var(--coral)]">{titleTail}</span></>}
               </h1>
-              <p className="mt-3 text-xs text-white/50">{t('landing.helloNote')}</p>
-              <p className="mt-6 max-w-[56ch] text-base leading-relaxed text-white/80 sm:text-lg">{c(page.hero, 'subtitle')}</p>
-              <div className="mt-9 flex flex-wrap items-center gap-3">
-                <a href="#contact" className="btn-coral">{c(page.hero, 'secondaryCta')}</a>
-                <a href="#courses" className="btn-outline-light">{t('landing.viewCourses')}</a>
+              <p className="mt-3 text-sm text-[color:var(--muted-2)]">{t('landing.helloNote')}</p>
+              <p className="mt-6 max-w-[56ch] text-lg leading-relaxed text-[color:var(--muted)]">{c(page.hero, 'subtitle')}</p>
+              <div className="mt-9 flex flex-wrap items-center gap-4">
+                <a href="#contact" className="lp-btn lp-btn-cta">{c(page.hero, 'secondaryCta')}</a>
+                <a href="#courses" className="lp-btn lp-btn-ghost">{t('landing.viewCourses')}</a>
               </div>
             </Reveal>
           </div>
         </section>
 
         {/* ---------- RIBBONS ---------- */}
-        <div aria-hidden="true" className="relative overflow-hidden py-10">
-          <div className="-mx-4 -rotate-2 bg-sun py-3">
-            <div className="flex w-max animate-marquee items-center gap-8 whitespace-nowrap font-heavy text-2xl text-ink sm:text-4xl">
+        <div aria-hidden="true" className="overflow-hidden py-10">
+          <div className="lp-ribbon lp-ribbon-yellow">
+            <div className="lp-marquee">
               {[...greetings, ...greetings].map((word, index) => (
-                <span key={index} className="flex items-center gap-8">{word}<span className="text-xl">✦</span></span>
+                <span key={index} className="flex items-center gap-8">{word}<span className="text-[0.6em]">✦</span></span>
               ))}
             </div>
           </div>
-          <div className="-mx-4 -mt-2 rotate-1 bg-coral py-2.5">
-            <div className="flex w-max animate-marquee-reverse items-center gap-10 whitespace-nowrap text-sm font-bold uppercase tracking-[0.15em] text-ink">
+          <div className="lp-ribbon lp-ribbon-coral">
+            <div className="lp-marquee lp-marquee-reverse">
               {[...ribbonWords, ...ribbonWords].map((word, index) => <span key={index}>{word}</span>)}
             </div>
           </div>
         </div>
 
         {/* ---------- COURSES ---------- */}
-        <section id="courses" className="section">
-          <div className="container-tj">
+        <section id="courses" className="lp-section">
+          <div className="lp-wrap">
             <Reveal className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-              <h2 className={cn(sectionTitle, 'max-w-xl text-white')}>{t('landing.coursesTitle')}</h2>
-              <p className="max-w-xs text-sm text-white/60">{t('landing.pickCourse')}</p>
+              <h2 className="lp-h2 max-w-2xl">{t('landing.coursesTitle')}</h2>
+              <p className="max-w-xs text-[0.95rem] text-[color:var(--muted)]">{t('landing.pickCourse')}</p>
             </Reveal>
 
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="lp-grid mt-12">
               {page.courses.map((course, index) => {
                 const chosen = contactForm.course === course.name;
                 return (
                   <Reveal key={course.id} delay={(index % 4) * 0.05}>
                     <button type="button" onClick={() => pickCourse(course.name)} aria-pressed={chosen}
-                      className={cn('group flex h-full min-h-[13rem] w-full flex-col rounded-[1.25rem] border p-5 text-left transition duration-300 hover:-translate-y-1',
-                        chosen ? 'border-sun bg-sun text-ink' : 'border-white/10 bg-ink-2 text-white hover:border-sun/60')}>
+                      className={cn('lp-card flex h-full min-h-[15rem] w-full flex-col text-left', chosen && 'lp-card-active')}>
                       <div className="flex items-start justify-between gap-3">
-                        <span className="font-heavy text-3xl">{courseCode(course.name)}</span>
-                        <span className={cn('rounded-full border px-2.5 py-0.5 text-[0.7rem] font-semibold',
-                          chosen ? 'border-ink/40' : 'border-white/30')}>{course.level}</span>
+                        <span className="lp-code">{courseCode(course.name)}</span>
+                        <span className="lp-tag">{course.level}</span>
                       </div>
-                      <h3 className={cn('mt-auto pt-8 font-heavy text-lg', chosen ? 'text-ink' : 'text-white')}>{c(course, 'name')}</h3>
-                      <p className={cn('mt-1.5 text-xs leading-relaxed', chosen ? 'text-ink/75' : 'text-white/60')}>{c(course, 'description')}</p>
-                      <p className={cn('mt-3 text-xs font-semibold', chosen ? 'text-ink' : 'text-sun')}>
+                      <h3 className="mt-auto pt-8 font-heavy text-lg">{c(course, 'name')}</h3>
+                      <p className="lp-card-muted mt-2 text-sm leading-relaxed">{c(course, 'description')}</p>
+                      <p className="lp-card-accent mt-4 text-sm font-bold">
                         {money(course.pricePerMonth)} {t('common.perMonth')} · {course.duration}
                       </p>
                     </button>
@@ -839,32 +852,32 @@ function LandingPage() {
         </section>
 
         {/* ---------- WHY US (cream) ---------- */}
-        <section id="about" className="section rounded-t-[2.5rem] bg-cream text-ink">
-          <div className="container-tj">
+        <section id="about" className="lp-section lp-cream">
+          <div className="lp-wrap">
             <Reveal>
-              <h2 className={cn(sectionTitle, 'text-ink')}>
-                {t('landing.whyLead')} <span className="rounded-xl bg-sun px-2">{t('landing.whyMark')}</span>
+              <h2 className="lp-h2">
+                {t('landing.whyLead')} <span className="lp-mark">{t('landing.whyMark')}</span>
               </h2>
-              <p className="mt-5 max-w-[68ch] leading-relaxed text-ink/70">{c(page.about, 'body')}</p>
+              <p className="mt-6 max-w-[68ch] text-lg leading-relaxed lp-text-soft">{c(page.about, 'body')}</p>
             </Reveal>
 
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="lp-grid lp-bento mt-12">
               {headStat && (
-                <Reveal className="sm:row-span-2">
-                  <div className="flex h-full min-h-[16rem] flex-col rounded-[1.25rem] bg-ink p-6 text-white">
-                    <p className="font-heavy text-5xl text-sun sm:text-6xl">
+                <Reveal className="lp-bento-tall">
+                  <div className="lp-card lp-tone-ink flex h-full min-h-[18rem] flex-col">
+                    <p className="lp-code text-[color:var(--yellow)]">
                       <CountUp value={headStat.value} decimals={headStat.decimals ?? 0} />{headStat.suffix}
                     </p>
-                    <p className="mt-auto font-heavy text-lg">{c(headStat, 'label')}</p>
-                    <p className="mt-1 text-xs text-white/60">{c(page.about, 'mission')}</p>
+                    <p className="mt-auto pt-8 font-heavy text-xl">{c(headStat, 'label')}</p>
+                    <p className="mt-2 text-sm text-[color:var(--muted)]">{c(page.about, 'mission')}</p>
                   </div>
                 </Reveal>
               )}
               {page.benefits.slice(0, 5).map((benefit, index) => (
                 <Reveal key={benefit.id} delay={index * 0.05}>
-                  <div className={cn('h-full rounded-[1.25rem] p-5', benefitTones[index % benefitTones.length])}>
-                    <h3 className="font-heavy text-base text-ink">{c(benefit, 'title')}</h3>
-                    <p className="mt-2 text-sm leading-relaxed opacity-80">{c(benefit, 'text')}</p>
+                  <div className={cn('lp-card h-full', benefitTones[index % benefitTones.length])}>
+                    <h3 className="font-heavy text-lg">{c(benefit, 'title')}</h3>
+                    <p className="mt-3 text-[0.95rem] leading-relaxed opacity-80">{c(benefit, 'text')}</p>
                   </div>
                 </Reveal>
               ))}
@@ -872,11 +885,11 @@ function LandingPage() {
 
             {Boolean(restStats.length) && (
               <Reveal>
-                <dl className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                <dl className="lp-grid lp-grid-sm mt-5">
                   {restStats.map((stat) => (
-                    <div key={stat.id} className="rounded-[1.25rem] border-2 border-ink bg-white px-5 py-5">
-                      <dd className="font-heavy text-2xl text-ink"><CountUp value={stat.value} decimals={stat.decimals ?? 0} />{stat.suffix}</dd>
-                      <dt className="mt-1 text-xs text-ink/65">{c(stat, 'label')}</dt>
+                    <div key={stat.id} className="lp-card lp-tone-white">
+                      <dd className="font-heavy text-3xl"><CountUp value={stat.value} decimals={stat.decimals ?? 0} />{stat.suffix}</dd>
+                      <dt className="mt-2 text-sm opacity-75">{c(stat, 'label')}</dt>
                     </div>
                   ))}
                 </dl>
@@ -887,34 +900,27 @@ function LandingPage() {
 
         {/* ---------- PRICES (cream, continued) ---------- */}
         {Boolean(plans.length) && (
-          <section id="prices" className="border-t border-ink/10 bg-cream pb-20 pt-16 text-ink sm:pb-28">
-            <div className="container-tj">
-              <Reveal><h2 className={cn(sectionTitle, 'text-ink')}>{t('landing.pricesTitle')}</h2></Reveal>
-              <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <section id="prices" className="lp-section lp-cream-flat border-t-2 border-[rgba(14,15,44,0.12)]">
+            <div className="lp-wrap">
+              <Reveal><h2 className="lp-h2">{t('landing.pricesTitle')}</h2></Reveal>
+              <div className="lp-grid mt-12">
                 {plans.map((plan) => {
                   const featured = plan === popular;
                   return (
                     <Reveal key={plan.id}>
-                      <article className={cn('relative flex h-full flex-col rounded-[1.25rem] p-6',
-                        featured ? 'bg-ink text-white' : 'border-2 border-ink bg-white text-ink')}>
-                        {featured && (
-                          <span className="absolute -top-3 right-5 rotate-3 rounded-full bg-coral px-3 py-1 text-xs font-bold text-ink">
-                            {t('landing.mostPopular')}
-                          </span>
-                        )}
-                        <p className={cn('text-sm font-semibold', featured ? 'text-sun' : 'text-ink')}>{c(plan, 'name')}</p>
-                        <p className={cn('mt-3 font-heavy text-3xl', featured ? 'text-white' : 'text-ink')}>
-                          {Number(plan.pricePerMonth).toLocaleString('en-US')}
-                        </p>
-                        <p className="mt-1 text-xs opacity-60">{t('landing.sumPerMonth')}</p>
-                        <ul className="mt-6 flex-1 space-y-2 text-sm">
+                      <article className={cn('lp-card relative flex h-full flex-col', featured ? 'lp-tone-ink' : 'lp-tone-white')}>
+                        {featured && <span className="lp-flag">{t('landing.mostPopular')}</span>}
+                        <p className={cn('text-[0.95rem] font-bold', featured && 'text-[color:var(--yellow)]')}>{c(plan, 'name')}</p>
+                        <p className="lp-code mt-4">{Number(plan.pricePerMonth).toLocaleString('en-US')}</p>
+                        <p className="mt-1 text-sm opacity-75">{t('landing.sumPerMonth')}</p>
+                        <ul className="mt-6 flex-1 space-y-2.5 text-[0.95rem]">
                           {plan.lessonsPerWeek && <li>{t('landing.timesPerWeek', { count: plan.lessonsPerWeek })}</li>}
                           <li>{plan.schedule}</li>
                           <li>{plan.duration} · {plan.lessonsCount} {t('landing.lessonsLabel').toLowerCase()}</li>
                           <li>{plan.level}</li>
                         </ul>
                         <button type="button" onClick={() => pickCourse(plan.name)}
-                          className={cn('mt-6', featured ? 'btn-sun' : 'btn-ink')}>{t('landing.joinCourse')}</button>
+                          className={cn('lp-btn mt-7', featured ? 'lp-btn-yellow' : 'lp-btn-ink')}>{t('landing.joinCourse')}</button>
                       </article>
                     </Reveal>
                   );
@@ -925,29 +931,29 @@ function LandingPage() {
         )}
 
         {/* ---------- IELTS RESULTS ---------- */}
-        <section id="results" className="section">
-          <div className="container-tj">
-            <Reveal className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{page.resultsBlock.eyebrow}</p>
-              <h2 className={cn(sectionTitle, 'mt-4 text-white')}>{page.resultsBlock.title}</h2>
-              <p className="mt-4 leading-relaxed text-white/60">{page.resultsBlock.subtitle}</p>
+        <section id="results" className="lp-section">
+          <div className="lp-wrap">
+            <Reveal className="max-w-3xl">
+              <p className="lp-eyebrow">{page.resultsBlock.eyebrow}</p>
+              <h2 className="lp-h2 mt-5">{page.resultsBlock.title}</h2>
+              <p className="mt-5 text-lg leading-relaxed text-[color:var(--muted)]">{page.resultsBlock.subtitle}</p>
             </Reveal>
 
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="lp-grid mt-12">
               {page.results.map((result, index) => (
                 <Reveal key={result.id} delay={(index % 4) * 0.05}>
-                  <article className="h-full rounded-[1.25rem] border border-white/10 bg-ink-2 p-5">
+                  <article className="lp-card h-full">
                     <div className="flex items-start justify-between">
-                      <Avatar name={result.studentName} size="h-11 w-11 text-sm" />
-                      <p className="font-heavy text-4xl text-sun">{result.overall.toFixed(1)}</p>
+                      <Avatar name={result.studentName} size="h-12 w-12 text-sm" />
+                      <p className="lp-code text-[color:var(--yellow)]">{result.overall.toFixed(1)}</p>
                     </div>
-                    <h3 className="mt-4 font-heavy text-base text-white">{result.studentName}</h3>
-                    <p className="text-xs text-white/55">{result.startLevel} → {result.overall.toFixed(1)} · {result.monthsStudied} {t('landing.monthsLabel')}</p>
-                    <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
+                    <h3 className="mt-5 font-heavy text-base">{result.studentName}</h3>
+                    <p className="lp-card-muted text-sm">{result.startLevel} → {result.overall.toFixed(1)} · {result.monthsStudied} {t('landing.monthsLabel')}</p>
+                    <dl className="mt-5 grid grid-cols-4 gap-2 text-center">
                       {[['listening', 'L'], ['reading', 'R'], ['writing', 'W'], ['speaking', 'S']].map(([key, label]) => (
-                        <div key={key} className="rounded-lg bg-white/5 py-2">
-                          <dt className="text-[0.65rem] text-white/50">{label}</dt>
-                          <dd className="text-sm font-bold text-white">{result[key].toFixed(1)}</dd>
+                        <div key={key} className="rounded-xl border-2 border-[color:var(--line)] py-2">
+                          <dt className="text-xs text-[color:var(--muted-2)]">{label}</dt>
+                          <dd className="text-sm font-bold">{result[key].toFixed(1)}</dd>
                         </div>
                       ))}
                     </dl>
@@ -958,32 +964,32 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* ---------- TEACHERS ---------- */}
-        <section id="teachers" className="section pt-0">
-          <div className="container-tj">
-            <Reveal className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{t('landing.teachersEyebrow')}</p>
-              <h2 className={cn(sectionTitle, 'mt-4 text-white')}>{t('landing.teachersTitle')}</h2>
+        {/* ---------- TEACHERS (cream) ---------- */}
+        <section id="teachers" className="lp-section lp-cream">
+          <div className="lp-wrap">
+            <Reveal className="max-w-3xl">
+              <p className="lp-eyebrow lp-eyebrow-dark">{t('landing.teachersEyebrow')}</p>
+              <h2 className="lp-h2 mt-5">{t('landing.teachersTitle')}</h2>
             </Reveal>
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="lp-grid mt-12">
               {page.teachers.map((teacher, index) => (
                 <Reveal key={teacher.id} delay={(index % 4) * 0.05}>
-                  <article className="group relative h-full overflow-hidden rounded-[1.25rem] border border-white/10 bg-ink-2 p-5 transition hover:border-sun/60">
+                  <article className="lp-card lp-tone-white group relative h-full overflow-hidden">
                     <div className="flex items-start justify-between">
                       <Avatar name={teacher.fullName} src={teacher.avatar} size="h-16 w-16 text-lg" />
-                      <span className="rounded-full bg-sun px-2.5 py-1 text-xs font-bold text-ink">IELTS {teacher.ieltsScore.toFixed(1)}</span>
+                      <span className="lp-tag bg-[color:var(--yellow)]">IELTS {teacher.ieltsScore.toFixed(1)}</span>
                     </div>
-                    <h3 className="mt-4 font-heavy text-base text-white">{teacher.fullName}</h3>
-                    <p className="text-sm text-coral">{c(teacher, 'position')}</p>
-                    <p className="mt-3 text-xs text-white/60">{teacher.experience} {t('landing.yearsTeaching')} · {teacher.studentsCount ?? 0} {t('landing.studentsEnrolled')}</p>
+                    <h3 className="mt-5 font-heavy text-base">{teacher.fullName}</h3>
+                    <p className="text-sm font-bold text-[#B23A1E]">{c(teacher, 'position')}</p>
+                    <p className="mt-3 text-sm opacity-75">{teacher.experience} {t('landing.yearsTeaching')} · {teacher.studentsCount ?? 0} {t('landing.studentsEnrolled')}</p>
                     {teacher.rating ? (
-                      <p className="mt-1 flex items-center gap-1 text-xs text-sun">
-                        <Star size={12} fill="currentColor" />{teacher.rating}<span className="text-white/45">({teacher.reviewCount})</span>
+                      <p className="mt-1 flex items-center gap-1 text-sm font-bold">
+                        <Star size={13} fill="currentColor" />{teacher.rating}<span className="opacity-60">({teacher.reviewCount})</span>
                       </p>
                     ) : null}
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-sun p-5 text-sm leading-relaxed text-ink opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-[color:var(--yellow)] p-6 text-sm leading-relaxed text-[color:var(--ink)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                       <p className="font-bold">{teacher.specialization}</p>
-                      <p className="mt-1.5 text-ink/80">{c(teacher, 'bio')}</p>
+                      <p className="mt-1.5">{c(teacher, 'bio')}</p>
                     </div>
                   </article>
                 </Reveal>
@@ -992,27 +998,26 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* ---------- STUDENT STORIES (cream) ---------- */}
-        <section id="stories" className="section rounded-[2.5rem] bg-cream text-ink">
-          <div className="container-tj">
-            <Reveal className="max-w-2xl">
-              <h2 className={cn(sectionTitle, 'text-ink')}>{t('landing.storiesTitle')}</h2>
-              <p className="mt-4 text-sm text-ink/60">{t('landing.demoNotice')}</p>
+        {/* ---------- STUDENT STORIES ---------- */}
+        <section id="stories" className="lp-section">
+          <div className="lp-wrap">
+            <Reveal className="max-w-3xl">
+              <h2 className="lp-h2">{t('landing.storiesTitle')}</h2>
+              <p className="mt-4 text-sm text-[color:var(--muted-2)]">{t('landing.demoNotice')}</p>
             </Reveal>
-            <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="lp-grid mt-12">
               {page.testimonials.map((item, index) => (
                 <Reveal key={item.id} delay={(index % 3) * 0.05}>
-                  <article className={cn('flex h-full flex-col rounded-[1.25rem] p-6',
-                    index % 3 === 1 ? 'bg-sun' : 'border-2 border-ink bg-white')}>
-                    <p className="font-heavy text-4xl leading-none text-coral">“</p>
-                    <blockquote className="mt-2 flex-1 leading-relaxed text-ink/85">{c(item, 'quote')}</blockquote>
-                    <div className="mt-6 flex items-center gap-3 border-t border-ink/15 pt-4">
+                  <article className={cn('lp-card flex h-full flex-col', index % 3 === 1 && 'lp-tone-yellow')}>
+                    <p className="font-heavy text-5xl leading-none text-[color:var(--coral)]">“</p>
+                    <blockquote className="mt-2 flex-1 text-[1.02rem] leading-relaxed">{c(item, 'quote')}</blockquote>
+                    <div className="mt-6 flex flex-wrap items-center gap-3 border-t-2 pt-4" style={{ borderColor: 'color-mix(in srgb, currentColor 18%, transparent)' }}>
                       <Avatar name={item.name} size="h-11 w-11 text-sm" />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-bold text-ink">{item.name}</p>
-                        <p className="truncate text-xs text-ink/60">{item.course}</p>
+                      <div className="min-w-[9rem] flex-1">
+                        <p className="font-bold">{item.name}</p>
+                        <p className="lp-card-muted truncate text-sm">{item.course}</p>
                       </div>
-                      <span className="rounded-full bg-ink px-2.5 py-1 text-xs font-bold text-sun">{item.levelBefore} → {Number(item.ieltsScore).toFixed(1)}</span>
+                      <span className="lp-tag">{item.levelBefore} → {Number(item.ieltsScore).toFixed(1)}</span>
                     </div>
                   </article>
                 </Reveal>
@@ -1021,19 +1026,19 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* ---------- HOW IT WORKS ---------- */}
-        <section className="section">
-          <div className="container-tj">
-            <Reveal className="max-w-2xl">
-              <h2 className={cn(sectionTitle, 'text-white')}>{t('landing.stepsTitle')}</h2>
+        {/* ---------- HOW IT WORKS (cream) ---------- */}
+        <section className="lp-section lp-cream">
+          <div className="lp-wrap">
+            <Reveal className="max-w-3xl">
+              <h2 className="lp-h2">{t('landing.stepsTitle')}</h2>
             </Reveal>
-            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="lp-grid mt-12">
               {page.steps.map((step, index) => (
                 <Reveal key={step.id} delay={index * 0.05}>
-                  <div className="h-full rounded-[1.25rem] border border-white/10 bg-ink-2 p-6">
-                    <span className="font-heavy text-5xl text-sun">{String(index + 1).padStart(2, '0')}</span>
-                    <h3 className="mt-6 font-heavy text-lg text-white">{c(step, 'title')}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-white/60">{c(step, 'text')}</p>
+                  <div className={cn('lp-card h-full', ['lp-tone-ink', 'lp-tone-coral', 'lp-tone-yellow', 'lp-tone-white'][index % 4])}>
+                    <span className="lp-code">{String(index + 1).padStart(2, '0')}</span>
+                    <h3 className="mt-6 font-heavy text-lg">{c(step, 'title')}</h3>
+                    <p className="mt-2 text-[0.95rem] leading-relaxed opacity-80">{c(step, 'text')}</p>
                   </div>
                 </Reveal>
               ))}
@@ -1042,25 +1047,25 @@ function LandingPage() {
         </section>
 
         {/* ---------- EVENTS ---------- */}
-        <section id="events" className="section pt-0">
-          <div className="container-tj">
-            <Reveal className="max-w-2xl">
-              <h2 className={cn(sectionTitle, 'text-white')}>{t('landing.eventsTitle')}</h2>
+        <section id="events" className="lp-section">
+          <div className="lp-wrap">
+            <Reveal className="max-w-3xl">
+              <h2 className="lp-h2">{t('landing.eventsTitle')}</h2>
             </Reveal>
-            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="lp-grid lp-grid-wide mt-12">
               {page.events.slice(0, 6).map((event, index) => (
                 <Reveal key={event.id} delay={(index % 3) * 0.05}>
-                  <article className="flex h-full gap-5 rounded-[1.25rem] border border-white/10 bg-ink-2 p-5">
-                    <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-xl bg-coral text-ink">
+                  <article className="lp-card flex h-full gap-5">
+                    <div className="flex h-[4.5rem] w-[4.5rem] shrink-0 flex-col items-center justify-center rounded-2xl bg-[color:var(--coral)] text-[color:var(--ink)]">
                       <span className="font-heavy text-2xl leading-none">{event.date.slice(8, 10)}</span>
-                      <span className="text-[0.65rem] font-bold">{event.date.slice(5, 7)}.{event.date.slice(2, 4)}</span>
+                      <span className="text-xs font-bold">{event.date.slice(5, 7)}.{event.date.slice(2, 4)}</span>
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[0.7rem] font-bold uppercase tracking-wider text-sun">{event.type}</span>
-                      <h3 className="mt-1 font-heavy text-base text-white">{event.title}</h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-white/60">{event.description}</p>
-                      <p className="mt-3 flex items-center gap-1.5 text-xs text-white/50">
-                        <Clock size={12} />{event.time}<span className="mx-1">·</span><MapPin size={12} />{event.location}
+                      <span className="lp-tag">{event.type}</span>
+                      <h3 className="mt-3 font-heavy text-base">{event.title}</h3>
+                      <p className="lp-card-muted mt-2 text-sm leading-relaxed">{event.description}</p>
+                      <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-[color:var(--muted-2)]">
+                        <Clock size={13} />{event.time}<span className="mx-1">·</span><MapPin size={13} />{event.location}
                       </p>
                     </div>
                   </article>
@@ -1072,41 +1077,41 @@ function LandingPage() {
 
         {/* ---------- BRANCHES (Olmaliq) ---------- */}
         {Boolean(page.branches?.length) && (
-          <section id="branches" className="section bg-sun text-ink">
-            <div className="container-tj">
-              <Reveal className="max-w-2xl">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink/70">{page.settings?.branchesTitle || t('landing.branchesEyebrow')}</p>
-                <h2 className={cn(sectionTitle, 'mt-4 text-ink')}>{t('landing.branchesTitle')}</h2>
-                <p className="mt-4 leading-relaxed text-ink/70">{page.settings?.branchesSubtitle || t('landing.branchesSubtitle')}</p>
+          <section id="branches" className="lp-section lp-yellow">
+            <div className="lp-wrap">
+              <Reveal className="max-w-3xl">
+                <p className="lp-eyebrow lp-eyebrow-dark">{page.settings?.branchesTitle || t('landing.branchesEyebrow')}</p>
+                <h2 className="lp-h2 mt-5">{t('landing.branchesTitle')}</h2>
+                <p className="mt-5 text-lg leading-relaxed">{page.settings?.branchesSubtitle || t('landing.branchesSubtitle')}</p>
               </Reveal>
 
-              <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              <div className="lp-grid lp-grid-wide mt-12">
                 {page.branches.map((branch, index) => (
                   <Reveal key={branch.id} delay={index * 0.08}>
-                    <article className="flex h-full flex-col overflow-hidden rounded-[1.25rem] bg-ink text-white">
+                    <article className="lp-card lp-tone-ink flex h-full flex-col overflow-hidden !p-0">
                       {branch.image && (
                         <img src={branch.image} alt={c(branch, 'name')} loading="lazy" className="aspect-[16/10] w-full object-cover" />
                       )}
-                      <div className="flex flex-1 flex-col p-6">
-                        <span className="font-heavy text-4xl text-sun">{String(index + 1).padStart(2, '0')}</span>
-                        <h3 className="mt-4 font-heavy text-xl text-white">{c(branch, 'name')}</h3>
+                      <div className="flex flex-1 flex-col p-7">
+                        <span className="lp-code text-[color:var(--yellow)]">{String(index + 1).padStart(2, '0')}</span>
+                        <h3 className="mt-4 font-heavy text-xl">{c(branch, 'name')}</h3>
 
                         {c(branch, 'address') ? (
-                          <p className="mt-3 flex gap-2.5 text-sm leading-relaxed text-white/80">
-                            <MapPin size={15} className="mt-0.5 shrink-0 text-coral" />
+                          <p className="mt-3 flex gap-2.5 text-[0.95rem] leading-relaxed text-[color:var(--muted)]">
+                            <MapPin size={16} className="mt-0.5 shrink-0 text-[color:var(--coral)]" />
                             <span>{c(branch, 'address')}</span>
                           </p>
                         ) : (
-                          <p className="mt-3 text-xs text-sun">{t('landing.branchSetup')}</p>
+                          <p className="mt-3 text-sm text-[color:var(--yellow)]">{t('landing.branchSetup')}</p>
                         )}
 
-                        <dl className="mt-3 flex-1 space-y-2 text-sm text-white/65">
+                        <dl className="mt-3 flex-1 space-y-2 text-sm text-[color:var(--muted)]">
                           {c(branch, 'landmark') && (
                             <div className="flex gap-2.5"><Navigation size={14} className="mt-0.5 shrink-0" /><dd>{c(branch, 'landmark')}</dd></div>
                           )}
                           {branch.phone && (
                             <div className="flex gap-2.5"><Phone size={14} className="mt-0.5 shrink-0" />
-                              <dd><a href={`tel:${branch.phone.replace(/\s/g, '')}`} className="hover:text-white">{branch.phone}</a></dd>
+                              <dd><a href={`tel:${branch.phone.replace(/\s/g, '')}`} className="hover:text-[color:var(--yellow)]">{branch.phone}</a></dd>
                             </div>
                           )}
                           {c(branch, 'workingHours') && (
@@ -1116,21 +1121,21 @@ function LandingPage() {
 
                         {branch.video && (
                           <a href={branch.video} target="_blank" rel="noreferrer"
-                            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-sun hover:text-white">
+                            className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[color:var(--yellow)]">
                             <PlayCircle size={15} />{t('landing.watchVideo')}
                           </a>
                         )}
 
                         {(branch.googleMaps || branch.yandexMaps) && (
-                          <div className="mt-5 flex flex-wrap gap-2 border-t border-white/15 pt-5">
+                          <div className="mt-6 flex flex-wrap gap-3 border-t-2 border-[color:var(--line)] pt-6">
                             {branch.googleMaps && (
-                              <a href={branch.googleMaps} target="_blank" rel="noreferrer" className="btn-sun btn-sm">
-                                <MapPin size={14} />{t('landing.googleMaps')}
+                              <a href={branch.googleMaps} target="_blank" rel="noreferrer" className="lp-btn lp-btn-yellow lp-btn-sm">
+                                <MapPin size={15} />{t('landing.googleMaps')}
                               </a>
                             )}
                             {branch.yandexMaps && (
-                              <a href={branch.yandexMaps} target="_blank" rel="noreferrer" className="btn-outline-light btn-sm">
-                                <Navigation size={14} />{t('landing.yandexMaps')}
+                              <a href={branch.yandexMaps} target="_blank" rel="noreferrer" className="lp-btn lp-btn-ghost lp-btn-sm">
+                                <Navigation size={15} />{t('landing.yandexMaps')}
                               </a>
                             )}
                           </div>
@@ -1146,36 +1151,35 @@ function LandingPage() {
 
         {/* ---------- MEDIA / SCHOOL LIFE ---------- */}
         {Boolean(page.media?.length) && (
-          <section id="media" className="section">
-            <div className="container-tj">
-              <Reveal className="max-w-2xl">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{page.settings?.mediaTitle || t('landing.mediaEyebrow')}</p>
-                <h2 className={cn(sectionTitle, 'mt-4 text-white')}>{t('landing.mediaTitle')}</h2>
-                {page.settings?.mediaSubtitle && <p className="mt-4 leading-relaxed text-white/60">{page.settings.mediaSubtitle}</p>}
+          <section id="media" className="lp-section">
+            <div className="lp-wrap">
+              <Reveal className="max-w-3xl">
+                <p className="lp-eyebrow">{page.settings?.mediaTitle || t('landing.mediaEyebrow')}</p>
+                <h2 className="lp-h2 mt-5">{t('landing.mediaTitle')}</h2>
+                {page.settings?.mediaSubtitle && <p className="mt-5 text-lg leading-relaxed text-[color:var(--muted)]">{page.settings.mediaSubtitle}</p>}
               </Reveal>
 
-              <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="lp-grid mt-12">
                 {page.media.slice(0, 9).map((post, index) => (
                   <Reveal key={post.id} delay={(index % 3) * 0.08}>
-                    <button type="button" onClick={() => setMediaPost(post)}
-                      className="group block h-full w-full overflow-hidden rounded-[1.25rem] border border-white/10 bg-ink-2 text-left transition hover:border-sun/60">
-                      <div className="relative aspect-[4/3] overflow-hidden bg-ink">
+                    <button type="button" onClick={() => setMediaPost(post)} className="lp-card block h-full w-full overflow-hidden !p-0 text-left">
+                      <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--ink)]">
                         {post.image ? (
-                          <img src={post.image} alt={post.title} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                          <img src={post.image} alt={post.title} loading="lazy" className="h-full w-full object-cover" />
                         ) : (
-                          <span className="flex h-full w-full items-center justify-center bg-coral" aria-hidden="true"><Video size={28} className="text-ink/60" /></span>
+                          <span className="flex h-full w-full items-center justify-center bg-[color:var(--coral)]" aria-hidden="true"><Video size={28} className="text-[color:var(--ink)]" /></span>
                         )}
                         {post.video && (
-                          <span className="absolute inset-0 flex items-center justify-center bg-ink/30" aria-hidden="true">
-                            <PlayCircle size={44} className="text-white drop-shadow" />
+                          <span className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                            <PlayCircle size={48} className="text-[color:var(--cream)]" />
                           </span>
                         )}
-                        <span className="absolute left-3 top-3 rounded-full bg-sun px-2.5 py-1 text-xs font-bold text-ink">{post.category}</span>
+                        <span className="lp-tag absolute left-4 top-4 border-[color:var(--ink)] bg-[color:var(--yellow)] text-[color:var(--ink)]">{post.category}</span>
                       </div>
-                      <div className="p-5">
-                        <h3 className="font-heavy text-base text-white">{c(post, 'title')}</h3>
-                        <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-white/60">{c(post, 'description')}</p>
-                        <p className="mt-3 text-xs text-white/40">{formatDate(post.date)}</p>
+                      <div className="p-7">
+                        <h3 className="font-heavy text-base">{c(post, 'title')}</h3>
+                        <p className="lp-card-muted mt-2 line-clamp-2 text-sm leading-relaxed">{c(post, 'description')}</p>
+                        <p className="mt-3 text-sm text-[color:var(--muted-2)]">{formatDate(post.date)}</p>
                       </div>
                     </button>
                   </Reveal>
@@ -1186,23 +1190,23 @@ function LandingPage() {
         )}
 
         {/* ---------- FAQ (cream) ---------- */}
-        <section id="faq" className="section rounded-[2.5rem] bg-cream text-ink">
-          <div className="container-tj grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+        <section id="faq" className="lp-section lp-cream">
+          <div className="lp-wrap grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <Reveal className="lg:sticky lg:top-28">
-              <h2 className={cn(sectionTitle, 'text-ink')}>{t('landing.faqTitle')}</h2>
-              <p className="mt-5 max-w-[42ch] leading-relaxed text-ink/70">{t('landing.faqHelp')}</p>
+              <h2 className="lp-h2">{t('landing.faqTitle')}</h2>
+              <p className="mt-6 max-w-[42ch] text-lg leading-relaxed lp-text-soft">{t('landing.faqHelp')}</p>
             </Reveal>
             <Reveal>
               <div className="space-y-3">
                 {page.faq.map((item, index) => (
-                  <details key={item.id} className="group rounded-[1.25rem] border-2 border-ink bg-white open:bg-sun" open={index === 0}>
-                    <summary className="flex cursor-pointer items-center justify-between gap-6 px-5 py-4">
-                      <span className="font-heavy text-sm text-ink sm:text-base">{c(item, 'question')}</span>
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink text-sun transition group-open:rotate-45">
-                        <Plus size={16} />
+                  <details key={item.id} className="lp-faq group" open={index === 0}>
+                    <summary className="flex min-h-[3.5rem] cursor-pointer items-center justify-between gap-6 px-6 py-4">
+                      <span className="font-heavy text-sm sm:text-base">{c(item, 'question')}</span>
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--ink)] text-[color:var(--yellow)] transition group-open:rotate-45">
+                        <Plus size={18} />
                       </span>
                     </summary>
-                    <p className="max-w-[62ch] px-5 pb-5 leading-relaxed text-ink/80">{c(item, 'answer')}</p>
+                    <p className="max-w-[62ch] px-6 pb-6 leading-relaxed">{c(item, 'answer')}</p>
                   </details>
                 ))}
               </div>
@@ -1211,46 +1215,45 @@ function LandingPage() {
         </section>
 
         {/* ---------- FIRST LESSON FREE + SIGN-UP ---------- */}
-        <section id="contact" className="section">
-          <div className="container-tj grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+        <section id="contact" className="lp-section">
+          <div className="lp-wrap grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <Reveal>
-              <h2 className="font-heavy text-[3rem] leading-[1] text-white sm:text-[4.5rem]">
-                {t('landing.finalLead')}<br /><span className="text-sun">{t('landing.finalMark')}</span>
+              <h2 className="lp-h2 !text-[clamp(44px,6.5vw,88px)] !leading-[1]">
+                {t('landing.finalLead')}<br /><span className="text-[color:var(--yellow)]">{t('landing.finalMark')}</span>
               </h2>
-              <p className="mt-6 max-w-[46ch] leading-relaxed text-white/75">{t('landing.finalHint')}</p>
+              <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-[color:var(--muted)]">{t('landing.finalHint')}</p>
               <dl className="mt-10 space-y-4">
                 {[[MapPin, t('common.address'), page.contact.address], [Phone, t('common.phone'), page.contact.phone],
                   [Mail, t('common.email'), page.contact.email], [Clock, t('common.workingHours'), page.contact.workingHours]].map(([Icon, label, value]) => (
                   <div key={label} className="flex gap-4">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-2 text-sun"><Icon size={17} /></span>
-                    <div><dt className="text-xs text-white/50">{label}</dt><dd className="mt-0.5 text-sm font-medium text-white">{value}</dd></div>
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border-2 border-[color:var(--line)] text-[color:var(--yellow)]"><Icon size={18} /></span>
+                    <div><dt className="text-sm text-[color:var(--muted-2)]">{label}</dt><dd className="mt-0.5 font-bold">{value}</dd></div>
                   </div>
                 ))}
               </dl>
             </Reveal>
 
             <Reveal>
-              <form onSubmit={sendContact} noValidate className="rounded-[1.5rem] bg-ink-2 p-6 sm:p-8">
+              <form onSubmit={sendContact} noValidate className="lp-form">
                 <label className="block">
-                  <span className="mb-1.5 block text-xs font-semibold text-white/80">{t('common.fullName')}</span>
-                  <input className="input-dark" name="fullName" placeholder={t('form.egName')} value={contactForm.fullName}
+                  <span className="lp-label">{t('common.fullName')}</span>
+                  <input className="lp-input" name="fullName" placeholder={t('form.egName')} value={contactForm.fullName}
                     onChange={(e) => setContactForm({ ...contactForm, fullName: e.target.value })} />
                 </label>
                 <label className="mt-5 block">
-                  <span className="mb-1.5 block text-xs font-semibold text-white/80">{t('common.phone')}</span>
-                  <input className="input-dark" name="phone" type="tel" placeholder="+998 90 123 45 67" value={contactForm.phone}
+                  <span className="lp-label">{t('common.phone')}</span>
+                  <input className="lp-input" name="phone" type="tel" placeholder="+998 90 123 45 67" value={contactForm.phone}
                     onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} />
                 </label>
                 <fieldset className="mt-5">
-                  <legend className="mb-2 text-xs font-semibold text-white/80">{t('landing.chosenCourse')}</legend>
+                  <legend className="lp-label">{t('landing.chosenCourse')}</legend>
                   <div className="flex flex-wrap gap-2">
                     {page.courses.map((course) => {
                       const chosen = contactForm.course === course.name;
                       return (
                         <button key={course.id} type="button" aria-pressed={chosen}
                           onClick={() => setContactForm({ ...contactForm, course: chosen ? '' : course.name })}
-                          className={cn('rounded-full border px-3.5 py-1.5 text-xs font-semibold transition',
-                            chosen ? 'border-sun bg-sun text-ink' : 'border-white/25 text-white/85 hover:border-sun')}>
+                          className={cn('lp-chip', chosen && 'lp-chip-on')}>
                           {c(course, 'name')}
                         </button>
                       );
@@ -1258,12 +1261,12 @@ function LandingPage() {
                   </div>
                 </fieldset>
                 <label className="mt-5 block">
-                  <span className="mb-1.5 block text-xs font-semibold text-white/80">{t('common.message')}</span>
-                  <textarea className="input-dark" name="message" rows={2} value={contactForm.message}
+                  <span className="lp-label">{t('common.message')}</span>
+                  <textarea className="lp-input lp-textarea" name="message" rows={2} value={contactForm.message}
                     onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })} />
                 </label>
-                <button type="submit" disabled={sending} className="btn-sun mt-6 w-full py-3.5 font-heavy">
-                  {sending && <Loader2 size={16} className="animate-spin" />}{t('landing.signUp')}
+                <button type="submit" disabled={sending} className="lp-submit mt-7">
+                  {sending && <Loader2 size={18} className="animate-spin" />}{t('landing.signUp')}
                 </button>
               </form>
             </Reveal>
@@ -1272,24 +1275,24 @@ function LandingPage() {
       </main>
 
       {/* ---------- FOOTER ---------- */}
-      <footer className="border-t border-white/10 py-10">
-        <div className="container-tj flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+      <footer className="lp-footer">
+        <div className="lp-wrap flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div>
-            <span className="font-heavy text-sm uppercase tracking-wide text-white">{page.settings?.brandName || 'TJ Language School'}</span>
-            <p className="mt-2 max-w-[40ch] text-xs leading-relaxed text-white/50">{c(page.footer, 'tagline')}</p>
+            <span className="font-heavy text-sm uppercase tracking-wide text-[color:var(--cream)]">{page.settings?.brandName || 'TJ Language School'}</span>
+            <p className="mt-2 max-w-[40ch] leading-relaxed">{c(page.footer, 'tagline')}</p>
           </div>
-          <nav aria-label={t('field.links')} className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
-            <a href="#courses" className="text-white/60 hover:text-sun">{t('landing.coursesEyebrow')}</a>
-            <a href="#branches" className="text-white/60 hover:text-sun">{t('landing.branchesEyebrow')}</a>
-            <Link to="/register" className="text-white/60 hover:text-sun">{t('nav.register')}</Link>
-            <Link to="/login" className="text-white/60 hover:text-sun">{t('nav.login')}</Link>
-            <Link to="/request-status" className="text-white/60 hover:text-sun">{t('landing.checkRequest')}</Link>
+          <nav aria-label={t('field.links')} className="flex flex-wrap gap-x-5 gap-y-2">
+            <a href="#courses">{t('landing.coursesEyebrow')}</a>
+            <a href="#branches">{t('landing.branchesEyebrow')}</a>
+            <Link to="/register">{t('nav.register')}</Link>
+            <Link to="/login">{t('nav.login')}</Link>
+            <Link to="/request-status">{t('landing.checkRequest')}</Link>
             {['telegram', 'instagram', 'youtube', 'facebook'].filter((key) => page.settings?.social?.[key]).map((key) => (
-              <a key={key} href={page.settings.social[key]} target="_blank" rel="noreferrer" className="capitalize text-sun underline underline-offset-2">{key}</a>
+              <a key={key} href={page.settings.social[key]} target="_blank" rel="noreferrer" className="capitalize">{key}</a>
             ))}
           </nav>
         </div>
-        <div className="container-tj mt-8 flex flex-col gap-2 border-t border-white/10 pt-5 text-[0.7rem] text-white/40 sm:flex-row sm:justify-between">
+        <div className="lp-wrap mt-8 flex flex-col gap-2 border-t border-[#2A2B5C] pt-5 sm:flex-row sm:justify-between">
           <p>{c(page.footer, 'copyright')}</p>
           <p>{page.contact.address} · {page.contact.phone}</p>
         </div>
