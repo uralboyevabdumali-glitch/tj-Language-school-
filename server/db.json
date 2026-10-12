@@ -8,14 +8,15 @@
     {
       "id": "u-001",
       "fullName": "TJ School Administrator",
-      "initials": "TJ",
+      "initials": "TS",
       "email": "admin@tjlanguageschool.uz",
       "phone": "+998 71 200 40 40",
       "password": "$2a$10$Nm4JWmA4gmj8xoOXBBQmOOo5WhhvkB8Jp4EOTaz3b/InMBnnd8uCi",
       "role": "admin",
       "profileId": null,
       "status": "active",
-      "createdAt": "2024-09-18T09:00:00.000Z"
+      "createdAt": "2024-09-18T09:00:00.000Z",
+      "avatar": "https://www.magnific.com/vectors/profile-avatar"
     },
     {
       "id": "u-002",
@@ -902,8 +903,8 @@
       "avatar": null,
       "age": 21,
       "level": "B1",
-      "courseId": "c-002",
-      "courseName": "IELTS Preparation",
+      "courseId": "c-001",
+      "courseName": "General English",
       "groupId": "grp-001",
       "groupName": "IELTS Intermediate A",
       "teacherId": "t-001",
@@ -10809,7 +10810,7 @@
       "sender": "Azizbek Xolmatova",
       "receiverId": "u-001",
       "date": "2026-09-19T14:18:04.075Z",
-      "read": false,
+      "read": true,
       "meta": {
         "kind": "courseRequest",
         "id": "cr-001"
@@ -10823,11 +10824,541 @@
       "sender": "Azizbek Xolmatova",
       "receiverId": "u-001",
       "date": "2026-09-19T14:18:07.600Z",
-      "read": false,
+      "read": true,
       "meta": {
         "kind": "courseRequest",
         "id": "cr-002"
       }
+    },
+    {
+      "id": "n-17898274876001",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-012",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876002",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-021",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876003",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-030",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876004",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-039",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876005",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-048",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876006",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-057",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876007",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-016",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876008",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-020",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876009",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-024",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876010",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-028",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876011",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-032",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876012",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-036",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876013",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-040",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876014",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-044",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876015",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-052",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876016",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-056",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876017",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-060",
+      "date": "2026-10-12T13:03:12.462Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876018",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-012",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876019",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-021",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876020",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-030",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876021",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-039",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876022",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-048",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876023",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-057",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876024",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-016",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876025",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-020",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876026",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-024",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876027",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-028",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876028",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-032",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876029",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-036",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876030",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-040",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876031",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-044",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876032",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-052",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876033",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-056",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876034",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-060",
+      "date": "2026-10-12T13:03:14.577Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876035",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-012",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876036",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-021",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876037",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-030",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876038",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-039",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876039",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-048",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876040",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-057",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876041",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-016",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876042",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-020",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876043",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-024",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876044",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-028",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876045",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-032",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876046",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-036",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876047",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-040",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876048",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-044",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876049",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-052",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876050",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-056",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-17898274876051",
+      "title": "Payment reminder",
+      "message": "Hurmatli o‘quvchi, joriy oy uchun oylik to‘lovingizni amalga oshirishingizni so‘raymiz.",
+      "type": "warning",
+      "sender": "TJ Language School",
+      "receiverId": "u-060",
+      "date": "2026-10-12T13:03:14.783Z",
+      "read": false
+    },
+    {
+      "id": "n-1791810237419",
+      "title": "Course request approved",
+      "message": "IELTS Intensive",
+      "type": "success",
+      "sender": "TJ Language School",
+      "receiverId": "u-012",
+      "date": "2026-10-12T13:03:57.419Z",
+      "read": false
+    },
+    {
+      "id": "n-1791810238494",
+      "title": "Course request approved",
+      "message": "General English",
+      "type": "success",
+      "sender": "TJ Language School",
+      "receiverId": "u-012",
+      "date": "2026-10-12T13:03:58.494Z",
+      "read": false
     }
   ],
   "competitions": [
@@ -12223,48 +12754,48 @@
   "branches": [
     {
       "id": "br-001",
-      "name": "TJ Language School — Filial 1",
-      "address": "",
-      "landmark": "",
+      "name": "TJ Language School — Asosiy filial",
+      "address": "M. Ulug‘bek ko‘chasi, 31-uy, Olmaliq shahri, Toshkent viloyati",
+      "landmark": "19-maktab yonida",
       "phone": "+998 936051380",
       "workingHours": "Mon – Sat, 09:00 – 20:00",
       "image": "",
       "video": "",
-      "googleMaps": "",
-      "yandexMaps": "",
+      "googleMaps": "https://www.google.com/maps/search/?api=1&query=19-maktab%2C%20Mirzo%20Ulug%E2%80%98bek%20ko%E2%80%98chasi%2031%2C%20Olmaliq",
+      "yandexMaps": "https://yandex.uz/maps/?text=19-maktab%2C%20Mirzo%20Ulug%E2%80%98bek%20ko%E2%80%98chasi%2031%2C%20Olmaliq",
       "order": 1,
       "visible": true,
-      "needsSetup": true
+      "needsSetup": false
     },
     {
       "id": "br-002",
-      "name": "TJ Language School — Filial 2",
-      "address": "",
+      "name": "TJ Language School — Oydin filiali",
+      "address": "Oydin hududi, Olmaliq shahri, Toshkent viloyati",
       "landmark": "",
       "phone": "+998 936051380",
       "workingHours": "Mon – Sat, 09:00 – 20:00",
       "image": "",
       "video": "",
-      "googleMaps": "",
-      "yandexMaps": "",
+      "googleMaps": "https://www.google.com/maps/search/?api=1&query=Oydin%2C%20Olmaliq",
+      "yandexMaps": "https://yandex.uz/maps/?text=Oydin%2C%20Olmaliq",
       "order": 2,
       "visible": true,
-      "needsSetup": true
+      "needsSetup": false
     },
     {
       "id": "br-003",
-      "name": "TJ Language School — Filial 3",
-      "address": "",
-      "landmark": "",
+      "name": "TJ Language School — Korzinka filiali",
+      "address": "Korzinka supermarketi yonida, Olmaliq shahri, Toshkent viloyati",
+      "landmark": "Korzinka yonida",
       "phone": "+998 936051380",
       "workingHours": "Mon – Sat, 09:00 – 20:00",
       "image": "",
       "video": "",
-      "googleMaps": "",
-      "yandexMaps": "",
+      "googleMaps": "https://www.google.com/maps/search/?api=1&query=Korzinka%2C%20Olmaliq",
+      "yandexMaps": "https://yandex.uz/maps/?text=Korzinka%2C%20Olmaliq",
       "order": 3,
       "visible": true,
-      "needsSetup": true
+      "needsSetup": false
     }
   ],
   "mediaPosts": [],
@@ -14073,8 +14604,10 @@
       "courseName": "General English",
       "currentCourseId": "c-002",
       "message": "",
-      "status": "pending",
-      "createdAt": "2026-09-19T14:18:04.075Z"
+      "status": "approved",
+      "createdAt": "2026-09-19T14:18:04.075Z",
+      "decidedAt": "2026-10-12T13:03:58.494Z",
+      "decidedBy": "TJ School Administrator"
     },
     {
       "id": "cr-002",
@@ -14084,8 +14617,10 @@
       "courseName": "IELTS Intensive",
       "currentCourseId": "c-002",
       "message": "",
-      "status": "pending",
-      "createdAt": "2026-09-19T14:18:07.600Z"
+      "status": "approved",
+      "createdAt": "2026-09-19T14:18:07.600Z",
+      "decidedAt": "2026-10-12T13:03:57.419Z",
+      "decidedBy": "TJ School Administrator"
     }
   ],
   "landingDrafts": {},
