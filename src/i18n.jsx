@@ -204,6 +204,22 @@ const dictionary = {
     perWeek:            { uz: 'haftasiga',       ru: 'в неделю',        en: 'per week' },
     noRatingYet:        { uz: 'Baho yo\u2018q',  ru: 'Нет оценок',      en: 'No ratings yet' },
     basedOnReviews:     { uz: '{count} ta bahodan', ru: 'из {count} оценок', en: 'from {count} ratings' },
+    // landing redesign
+    freeLesson:         { uz: 'Bepul dars',     ru: 'Бесплатный урок',  en: 'Free lesson' },
+    freeSeal:           { uz: 'Birinchi dars bepul', ru: 'Первый урок бесплатно', en: 'First lesson free' },
+    helloNote:          { uz: 'Hozir o‘rgandingiz — inglizcha “salom”', ru: 'Вы только что выучили — «привет» по-английски', en: 'You just learned it — “hello” is “salom” in Uzbek' },
+    pickCourse:         { uz: 'Kartani bosing — u yozilish formasiga avtomatik tushadi.', ru: 'Нажмите на карточку — курс сам попадёт в форму записи.', en: 'Tap a card — it drops straight into the sign-up form.' },
+    whyLead:            { uz: 'Nega aynan',     ru: 'Почему именно',    en: 'Why choose' },
+    whyMark:            { uz: 'biz?',           ru: 'мы?',              en: 'us?' },
+    pricesTitle:        { uz: 'Narxlar',        ru: 'Цены',             en: 'Prices' },
+    mostPopular:        { uz: 'Eng ommabop',    ru: 'Самый популярный', en: 'Most popular' },
+    sumPerMonth:        { uz: 'so‘m / oyiga', ru: 'сум / месяц',  en: 'UZS / month' },
+    timesPerWeek:       { uz: 'Haftada {count} marta', ru: '{count} раза в неделю', en: '{count} times a week' },
+    finalLead:          { uz: 'Birinchi dars —', ru: 'Первый урок —',   en: 'First lesson —' },
+    finalMark:          { uz: 'bepul.',         ru: 'бесплатно.',       en: 'free.' },
+    finalHint:          { uz: 'Raqamingizni qoldiring — administrator siz bilan bog‘lanib, darajangizni aniqlaydi va qulay vaqtni tanlaydi.', ru: 'Оставьте номер — администратор свяжется с вами, определит уровень и подберёт удобное время.', en: 'Leave your number — an administrator will call, check your level and find a time that suits you.' },
+    chosenCourse:       { uz: 'Tanlangan kurs', ru: 'Выбранный курс',   en: 'Chosen course' },
+    signUp:             { uz: 'Yozilish',       ru: 'Записаться',       en: 'Sign up' },
   },
 
   /* ---------- auth ---------- */

@@ -14,10 +14,17 @@ export default {
         },
         violet: { 400: '#A78BFA', 500: '#8B5CF6', 600: '#7C3AED', 700: '#6D28D9' },
         mist: '#F5F7FD',
+        // Public landing page palette
+        ink: { DEFAULT: '#13132B', 2: '#1F1F47' },
+        sun: '#FFD43B',
+        coral: '#FF6B45',
+        cream: '#F4EFE6',
       },
       fontFamily: {
         display: ['Sora', 'sans-serif'],
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        heavy: ['"Dela Gothic One"', 'Sora', 'sans-serif'],
+        body: ['Manrope', '"Plus Jakarta Sans"', 'sans-serif'],
       },
       fontSize: {
         'display-sm': ['2.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
@@ -36,9 +43,15 @@ export default {
         grid: 'linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px)',
       },
       keyframes: {
+        marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
         drift: { '0%,100%': { transform: 'translate3d(0,0,0) scale(1)' }, '50%': { transform: 'translate3d(2rem,-1.5rem,0) scale(1.08)' } },
       },
-      animation: { drift: 'drift 18s ease-in-out infinite' },
+      animation: {
+        drift: 'drift 18s ease-in-out infinite',
+        marquee: 'marquee 40s linear infinite',
+        'marquee-reverse': 'marquee 48s linear infinite reverse',
+        'spin-slow': 'spin 18s linear infinite',
+      },
     },
   },
   plugins: [],

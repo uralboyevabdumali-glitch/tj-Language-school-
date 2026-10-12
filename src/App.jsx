@@ -37,7 +37,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  AlertTriangle, ArrowLeft, ArrowRight, Award, BarChart3, Bell, BellRing, BookOpen, Boxes, Calendar,
+  AlertTriangle, ArrowLeft, ArrowRight, ArrowUpRight, Award, BarChart3, Bell, BellRing, BookOpen, Boxes, Calendar,
   CalendarCheck, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ClipboardCheck, ClipboardList,
   Clock, Compass, Flame, Gamepad2, GraduationCap, Languages, Layout, LayoutDashboard, Link2, Loader2, Lock,
   LogOut, Mail, MapPin, Megaphone, Menu, Mic, Navigation, Pencil, Phone, PlayCircle, Plus, Radio, Save, Search,
@@ -620,15 +620,8 @@ function LandingPage() {
   // Admin-typed content: read the field for the visitor's language, falling
   // back to the base text when a translation has not been filled in.
   const c = (row, field) => cmsText(row, field, language);
-  const [scrolled, setScrolled] = useState(false);
   const [contactForm, setContactForm] = useState({ fullName: '', phone: '', email: '', course: '', message: '' });
   const [sending, setSending] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // The admin owns the page title and meta description, so apply them here.
   useEffect(() => {
@@ -674,287 +667,287 @@ function LandingPage() {
     }
   };
 
-  const bestBand = page.results.length ? Math.max(...page.results.map((r) => r.overall)) : 9;
-  const floatTone = {
-    gold: 'from-amber-400 to-amber-500 text-navy-950',
-    blue: 'from-electric-500 to-electric-600 text-white',
+  // Picking a course card fills the sign-up form and takes the visitor there.
+  const pickCourse = (name) => {
+    setContactForm((form) => ({ ...form, course: name }));
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // "General English" → "GE": the big two-letter mark on each course card.
+  const courseCode = (name = '') =>
+    name.split(/\s+/).filter(Boolean).map((word) => word[0]).join('').slice(0, 2).toUpperCase();
+
+  // The hero title splits at its first full stop: the first half white, the rest coral.
+  const heroTitle = c(page.hero, 'title') ?? '';
+  const splitAt = heroTitle.indexOf('. ');
+  const [titleLead, titleTail] = splitAt > 0
+    ? [heroTitle.slice(0, splitAt + 1), heroTitle.slice(splitAt + 2)]
+    : [heroTitle, ''];
+
+  // Three price cards from the real courses: the most-enrolled one in the
+  // middle, the cheapest and the dearest of the rest either side.
+  const priced = page.courses.filter((course) => course.pricePerMonth);
+  const popular = [...priced].sort((a, b) => (b.studentsCount ?? 0) - (a.studentsCount ?? 0))[0];
+  const others = priced.filter((course) => course !== popular).sort((a, b) => a.pricePerMonth - b.pricePerMonth);
+  const plans = popular ? [others[0], popular, others[others.length - 1]].filter(Boolean) : [];
+
+  const greetings = ['Hello', 'Привет', '안녕하세요', 'Merhaba', 'Hallo', 'Salom', 'Bonjour', 'مرحبا', 'Hola', 'Ciao'];
+  const ribbonWords = page.benefits.map((benefit) => c(benefit, 'title'));
+  const [headStat, ...restStats] = page.stats;
+  const benefitTones = ['bg-coral text-ink', 'border-2 border-ink bg-white text-ink', 'bg-sun text-ink', 'border-2 border-ink bg-white text-ink'];
+
+  const sectionTitle = 'font-heavy text-[2.25rem] leading-[1.05] sm:text-[3.25rem]';
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="landing flex min-h-screen flex-col overflow-x-clip bg-ink font-body text-white">
       {/* ---------- NAVBAR ---------- */}
-      <header className={cn('fixed inset-x-0 top-0 z-50 transition-all duration-300',
-        scrolled && 'border-b border-navy-100 bg-white/85 backdrop-blur-xl')}>
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
         <div className="container-tj flex h-[4.5rem] items-center justify-between gap-6">
-          <a href="#top" className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-action-gradient font-display text-lg font-bold text-white shadow-glow">TJ</span>
-            <span className="leading-tight">
-              <span className="block font-display text-[0.95rem] font-bold text-navy-900">TJ Language School</span>
-              <span className="block text-[0.7rem] text-navy-400">{t('landing.tagline')}</span>
-            </span>
+          <a href="#top" className="flex min-w-0 items-center gap-3 whitespace-nowrap">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sun font-heavy text-sm text-ink">TJ</span>
+            <span className="truncate font-heavy text-xs uppercase tracking-wide text-white sm:text-sm">{page.settings?.brandName || 'TJ Language School'}</span>
           </a>
 
-          <nav aria-label={t('msg.mainNav')} className="hidden items-center gap-0.5 lg:flex">
+          <nav aria-label={t('msg.mainNav')} className="hidden items-center xl:flex">
             {page.nav.map((item) => (
-              <a key={item.id} href={item.href} className="rounded-full px-3.5 py-2 text-sm font-medium text-navy-600 transition hover:bg-navy-50 hover:text-navy-900">
+              <a key={item.id} href={item.href} className="whitespace-nowrap rounded-full px-2.5 py-2 text-sm text-white/75 transition hover:text-sun">
                 {c(item, 'label')}
               </a>
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <LanguageSwitcher tone={scrolled ? 'light' : 'dark'} />
+          <div className="hidden shrink-0 items-center gap-3 whitespace-nowrap xl:flex">
+            <LanguageSwitcher tone="dark" />
             {isAuthenticated ? (
-              <Link to={DASHBOARD_HOME[role]} className="btn-primary btn-sm"><LayoutDashboard size={16} />{t('nav.dashboard')}</Link>
+              <Link to={DASHBOARD_HOME[role]} className="btn-sun btn-sm"><LayoutDashboard size={16} />{t('nav.dashboard')}</Link>
             ) : (
               <>
-                <Link to="/login" className="btn-secondary btn-sm">{t('nav.login')}</Link>
-                <Link to="/register" className="btn-primary btn-sm">{t('nav.register')}</Link>
+                <Link to="/login" className="text-sm font-semibold text-white/80 transition hover:text-white">{t('nav.login')}</Link>
+                <a href="#contact" className="btn-sun btn-sm">{t('landing.freeLesson')}</a>
               </>
             )}
           </div>
 
-          <div className="flex items-center gap-2 lg:hidden">
-            <LanguageSwitcher tone={scrolled ? 'light' : 'dark'} compact />
+          <div className="flex shrink-0 items-center gap-2 xl:hidden">
+            <LanguageSwitcher tone="dark" compact />
             <button type="button" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen}
               aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
-              className="rounded-xl border border-navy-200 bg-white p-2.5 text-navy-800">
+              className="rounded-xl border border-white/20 p-2.5 text-white">
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
 
         {menuOpen && (
-          <div className="border-t border-navy-100 bg-white lg:hidden">
+          <div className="border-t border-white/10 bg-ink xl:hidden">
             <nav aria-label={t('msg.mobileNav')} className="container-tj flex flex-col gap-1 py-5">
               {page.nav.map((item) => (
                 <a key={item.id} href={item.href} onClick={() => setMenuOpen(false)}
-                  className="rounded-xl px-3 py-3 font-medium text-navy-700 hover:bg-mist">{c(item, 'label')}</a>
+                  className="rounded-xl px-3 py-3 font-medium text-white/85 hover:bg-white/5">{c(item, 'label')}</a>
               ))}
               <div className="mt-3 grid grid-cols-2 gap-3">
-                <Link to="/login" className="btn-secondary">{t('nav.login')}</Link>
-                <Link to="/register" className="btn-primary">{t('nav.register')}</Link>
+                <Link to="/login" className="btn-outline-light">{t('nav.login')}</Link>
+                <Link to="/register" className="btn-sun">{t('nav.register')}</Link>
               </div>
             </nav>
           </div>
         )}
       </header>
 
-      <main id="top">
+      <main id="top" className="w-full min-w-0">
         {/* ---------- HERO ---------- */}
-        <section className="relative overflow-hidden bg-navy-950 pb-24 pt-32 sm:pb-32 sm:pt-40">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-0 bg-grid opacity-70" style={{ backgroundSize: '64px 64px' }} />
-            <div className="absolute -left-24 top-10 h-[26rem] w-[26rem] animate-drift rounded-full bg-electric-600/25 blur-[110px]" />
-            <div className="absolute -right-20 bottom-0 h-[30rem] w-[30rem] animate-drift rounded-full bg-violet-600/25 blur-[120px]" style={{ animationDelay: '-6s' }} />
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy-950 to-transparent" />
-          </div>
+        <section className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20">
+          <div className="container-tj relative">
+            {/* Rotating "first lesson free" seal, links to the sign-up form. */}
+            <a href="#contact" aria-label={t('landing.freeSeal')}
+              className="absolute right-5 top-0 hidden h-36 w-36 items-center justify-center sm:right-8 md:flex">
+              <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full animate-spin-slow text-sun" aria-hidden="true">
+                <defs><path id="seal-circle" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" /></defs>
+                <text fill="currentColor" className="font-heavy" fontSize="9" textLength="234" lengthAdjust="spacing">
+                  <textPath href="#seal-circle">{`${t('landing.freeSeal').toUpperCase()} • `}</textPath>
+                </text>
+              </svg>
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-sun text-ink transition hover:scale-110">
+                <ArrowUpRight size={20} />
+              </span>
+            </a>
 
-          <div className="container-tj relative grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
             <Reveal>
-              <p className="eyebrow-dark"><Sparkles size={14} />{c(page.hero, 'eyebrow')}</p>
-              <h1 className="mt-6 text-display-md text-white sm:text-display-lg">{c(page.hero, 'title')}</h1>
-              <p className="mt-6 max-w-[54ch] text-lg leading-relaxed text-navy-200 sm:text-xl">{c(page.hero, 'subtitle')}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{c(page.hero, 'eyebrow')}</p>
+              <p className="mt-6 font-heavy text-[5.5rem] leading-[0.9] text-sun sm:text-[9rem] lg:text-[11rem]" lang="en">Hello</p>
+              <h1 className="mt-4 max-w-4xl font-heavy text-[2rem] leading-[1.1] text-white sm:text-[3.25rem]">
+                {titleLead}{titleTail && <> <span className="text-coral">{titleTail}</span></>}
+              </h1>
+              <p className="mt-3 text-xs text-white/50">{t('landing.helloNote')}</p>
+              <p className="mt-6 max-w-[56ch] text-base leading-relaxed text-white/80 sm:text-lg">{c(page.hero, 'subtitle')}</p>
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link to="/register" className="btn-primary">{c(page.hero, 'primaryCta')}<ArrowRight size={17} /></Link>
-                <a href="#contact" className="btn-light">{c(page.hero, 'secondaryCta')}</a>
-                <a href="#courses" className="btn px-2 text-navy-200 underline-offset-4 hover:text-white hover:underline">{t('landing.viewCourses')}</a>
+                <a href="#contact" className="btn-coral">{c(page.hero, 'secondaryCta')}</a>
+                <a href="#courses" className="btn-outline-light">{t('landing.viewCourses')}</a>
               </div>
-              <p className="mt-8 text-sm text-navy-400">{t('landing.freeTest')}</p>
             </Reveal>
+          </div>
+        </section>
 
-            <Reveal className="relative">
-              <Float className="glass glow-ring rounded-panel p-6 shadow-lift sm:p-8">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-navy-200">{t('landing.recentResults')}</p>
-                  <span className="badge bg-emerald-400/15 text-emerald-300">{t('landing.sampleData')}</span>
-                </div>
-                <div className="mt-6 space-y-4">
-                  {page.results.slice(0, 4).map((result) => (
-                    <div key={result.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <div className="flex items-baseline justify-between gap-4">
-                        <span className="font-medium text-white">{result.studentName.split(' ')[0]}</span>
-                        <span className="font-display text-2xl font-bold text-white">{result.overall.toFixed(1)}</span>
-                      </div>
-                      <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
-                        <span className="block h-full rounded-full bg-gradient-to-r from-electric-400 to-violet-400"
-                          style={{ width: `${(result.overall / 9) * 100}%` }} />
-                      </div>
-                      <p className="mt-2 text-xs text-navy-300">{t('landing.startedAt')}: {result.startLevel}</p>
-                    </div>
-                  ))}
-                </div>
-              </Float>
-
-              {page.hero.floatingCards?.map((card, index) => (
-                <div key={card.id} className={cn('pointer-events-none absolute hidden sm:block', index === 0 ? '-left-4 top-8' : '-bottom-6 -right-2')}>
-                  <div className={cn('rounded-2xl bg-gradient-to-br px-5 py-4 shadow-lift', floatTone[card.tone] ?? floatTone.blue)}>
-                    <p className="font-display text-2xl font-bold leading-none">{card.value}</p>
-                    <p className="mt-1.5 text-xs font-medium opacity-90">{card.label}</p>
-                  </div>
-                </div>
+        {/* ---------- RIBBONS ---------- */}
+        <div aria-hidden="true" className="relative overflow-hidden py-10">
+          <div className="-mx-4 -rotate-2 bg-sun py-3">
+            <div className="flex w-max animate-marquee items-center gap-8 whitespace-nowrap font-heavy text-2xl text-ink sm:text-4xl">
+              {[...greetings, ...greetings].map((word, index) => (
+                <span key={index} className="flex items-center gap-8">{word}<span className="text-xl">✦</span></span>
               ))}
-            </Reveal>
+            </div>
           </div>
-        </section>
-
-        {/* ---------- STATISTICS ---------- */}
-        <section className="relative -mt-14 pb-4">
-          <div className="container-tj">
-            <Reveal>
-              <div className="grid grid-cols-2 gap-px overflow-hidden rounded-panel border border-navy-100 bg-navy-100 shadow-lift sm:grid-cols-3 lg:grid-cols-6">
-                {page.stats.map((stat) => (
-                  <div key={stat.id} className="bg-white px-5 py-7 text-center">
-                    <p className="font-display text-3xl font-bold text-navy-900 sm:text-[2.1rem]">
-                      <CountUp value={stat.value} decimals={stat.decimals ?? 0} />
-                      <span className="text-electric-600">{stat.suffix}</span>
-                    </p>
-                    <p className="mt-1.5 text-sm text-navy-500">{c(stat, 'label')}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+          <div className="-mx-4 -mt-2 rotate-1 bg-coral py-2.5">
+            <div className="flex w-max animate-marquee-reverse items-center gap-10 whitespace-nowrap text-sm font-bold uppercase tracking-[0.15em] text-ink">
+              {[...ribbonWords, ...ribbonWords].map((word, index) => <span key={index}>{word}</span>)}
+            </div>
           </div>
-        </section>
-
-        {/* ---------- ABOUT ---------- */}
-        <section id="about" className="section">
-          <div className="container-tj grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-            <Reveal>
-              <p className="eyebrow">{c(page.about, 'eyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{c(page.about, 'title')}</h2>
-              <p className="mt-6 max-w-[68ch] text-lg leading-relaxed text-navy-600">{c(page.about, 'body')}</p>
-              <figure className="mt-8 rounded-panel border-l-4 border-electric-500 bg-mist p-6">
-                <blockquote className="font-display text-lg font-medium leading-relaxed text-navy-800">{c(page.about, 'mission')}</blockquote>
-                <figcaption className="mt-3 text-sm text-navy-500">{t('msg.ourMission')}</figcaption>
-              </figure>
-            </Reveal>
-            <Reveal>
-              <dl className="grid gap-px overflow-hidden rounded-panel border border-navy-100 bg-navy-100 sm:grid-cols-2">
-                {page.about.highlights.map((item) => (
-                  <div key={item.id} className="bg-white px-6 py-7">
-                    <dt className="text-sm text-navy-500">{c(item, 'label')}</dt>
-                    <dd className="mt-1.5 font-display text-xl font-semibold text-navy-900">{item.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Reveal>
-          </div>
-        </section>
+        </div>
 
         {/* ---------- COURSES ---------- */}
-        <section id="courses" className="section bg-mist">
+        <section id="courses" className="section">
           <div className="container-tj">
-            <Reveal className="max-w-2xl">
-              <p className="eyebrow">{t('landing.coursesEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.coursesTitle')}</h2>
-              <p className="mt-4 text-lg leading-relaxed text-navy-500">{t('landing.coursesSubtitle')}</p>
+            <Reveal className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+              <h2 className={cn(sectionTitle, 'max-w-xl text-white')}>{t('landing.coursesTitle')}</h2>
+              <p className="max-w-xs text-sm text-white/60">{t('landing.pickCourse')}</p>
             </Reveal>
 
-            <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {page.courses.map((course) => (
-                <Reveal key={course.id}>
-                  <article className="group relative flex h-full flex-col overflow-hidden rounded-panel border border-navy-100 bg-white p-7 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-electric-200 hover:shadow-lift">
-                    <span className="absolute inset-x-0 top-0 h-1 bg-action-gradient" />
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="font-display text-xl font-semibold text-navy-900">{c(course, 'name')}</h3>
-                        <p className="mt-1 text-sm font-medium text-electric-600">{course.level}</p>
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {page.courses.map((course, index) => {
+                const chosen = contactForm.course === course.name;
+                return (
+                  <Reveal key={course.id} delay={(index % 4) * 0.05}>
+                    <button type="button" onClick={() => pickCourse(course.name)} aria-pressed={chosen}
+                      className={cn('group flex h-full min-h-[13rem] w-full flex-col rounded-[1.25rem] border p-5 text-left transition duration-300 hover:-translate-y-1',
+                        chosen ? 'border-sun bg-sun text-ink' : 'border-white/10 bg-ink-2 text-white hover:border-sun/60')}>
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="font-heavy text-3xl">{courseCode(course.name)}</span>
+                        <span className={cn('rounded-full border px-2.5 py-0.5 text-[0.7rem] font-semibold',
+                          chosen ? 'border-ink/40' : 'border-white/30')}>{course.level}</span>
                       </div>
-                      <span className="badge bg-navy-50 text-navy-600">{course.schedule}</span>
-                    </div>
-                    <p className="mt-4 flex-1 text-[0.95rem] leading-relaxed text-navy-600">{c(course, 'description')}</p>
-                    <dl className="mt-6 grid grid-cols-3 gap-3 border-y border-navy-100 py-4 text-sm">
-                      <div><dt className="text-navy-400">{t('landing.lengthLabel')}</dt><dd className="mt-1 font-semibold text-navy-800">{course.duration}</dd></div>
-                      <div><dt className="text-navy-400">{t('landing.lessonsLabel')}</dt><dd className="mt-1 font-semibold text-navy-800">{course.lessonsCount}</dd></div>
-                      <div><dt className="text-navy-400">{t('landing.groupLabel')}</dt><dd className="mt-1 font-semibold text-navy-800">{t('landing.maxStudents')}</dd></div>
-                      <div><dt className="text-navy-400">{t('common.students')}</dt>
-                        <dd className="mt-1 font-semibold text-navy-800">{course.studentsCount ?? 0}</dd></div>
-                      {course.lessonsPerWeek && (
-                        <div><dt className="text-navy-400">{t('landing.perWeek')}</dt>
-                          <dd className="mt-1 font-semibold text-navy-800">{course.lessonsPerWeek}</dd></div>
-                      )}
-                      {course.rating !== null && course.rating !== undefined && (
-                        <div><dt className="text-navy-400">{t('review.averageRating')}</dt>
-                          <dd className="mt-1 flex items-center gap-1 font-semibold text-navy-800">
-                            <Star size={13} className="text-amber-400" fill="currentColor" />{course.rating}
-                          </dd></div>
-                      )}
-                    </dl>
-                    <div className="mt-5 flex items-end justify-between gap-4">
-                      <p className="font-display text-lg font-bold text-navy-900">{money(course.pricePerMonth)}<span className="ml-1 text-sm font-medium text-navy-400">{t('common.perMonth')}</span></p>
-                      <Link to="/register" className="btn-secondary btn-sm">{t('landing.joinCourse')}</Link>
-                    </div>
-                  </article>
-                </Reveal>
-              ))}
+                      <h3 className={cn('mt-auto pt-8 font-heavy text-lg', chosen ? 'text-ink' : 'text-white')}>{c(course, 'name')}</h3>
+                      <p className={cn('mt-1.5 text-xs leading-relaxed', chosen ? 'text-ink/75' : 'text-white/60')}>{c(course, 'description')}</p>
+                      <p className={cn('mt-3 text-xs font-semibold', chosen ? 'text-ink' : 'text-sun')}>
+                        {money(course.pricePerMonth)} {t('common.perMonth')} · {course.duration}
+                      </p>
+                    </button>
+                  </Reveal>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* ---------- WHY TJ ---------- */}
-        <section className="section">
+        {/* ---------- WHY US (cream) ---------- */}
+        <section id="about" className="section rounded-t-[2.5rem] bg-cream text-ink">
           <div className="container-tj">
-            <Reveal className="max-w-2xl">
-              <p className="eyebrow">{t('landing.whyEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.whyTitle')}</h2>
+            <Reveal>
+              <h2 className={cn(sectionTitle, 'text-ink')}>
+                {t('landing.whyLead')} <span className="rounded-xl bg-sun px-2">{t('landing.whyMark')}</span>
+              </h2>
+              <p className="mt-5 max-w-[68ch] leading-relaxed text-ink/70">{c(page.about, 'body')}</p>
             </Reveal>
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {page.benefits.map((benefit) => (
-                <Reveal key={benefit.id}>
-                  <div className="group h-full rounded-panel border border-navy-100 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-electric-200 hover:shadow-lift">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-electric-50 text-electric-600 transition group-hover:bg-action-gradient group-hover:text-white">
-                      <Check size={20} />
-                    </span>
-                    <h3 className="mt-4 font-display text-base font-semibold text-navy-900">{c(benefit, 'title')}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-navy-600">{c(benefit, 'text')}</p>
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {headStat && (
+                <Reveal className="sm:row-span-2">
+                  <div className="flex h-full min-h-[16rem] flex-col rounded-[1.25rem] bg-ink p-6 text-white">
+                    <p className="font-heavy text-5xl text-sun sm:text-6xl">
+                      <CountUp value={headStat.value} decimals={headStat.decimals ?? 0} />{headStat.suffix}
+                    </p>
+                    <p className="mt-auto font-heavy text-lg">{c(headStat, 'label')}</p>
+                    <p className="mt-1 text-xs text-white/60">{c(page.about, 'mission')}</p>
+                  </div>
+                </Reveal>
+              )}
+              {page.benefits.slice(0, 5).map((benefit, index) => (
+                <Reveal key={benefit.id} delay={index * 0.05}>
+                  <div className={cn('h-full rounded-[1.25rem] p-5', benefitTones[index % benefitTones.length])}>
+                    <h3 className="font-heavy text-base text-ink">{c(benefit, 'title')}</h3>
+                    <p className="mt-2 text-sm leading-relaxed opacity-80">{c(benefit, 'text')}</p>
                   </div>
                 </Reveal>
               ))}
             </div>
+
+            {Boolean(restStats.length) && (
+              <Reveal>
+                <dl className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                  {restStats.map((stat) => (
+                    <div key={stat.id} className="rounded-[1.25rem] border-2 border-ink bg-white px-5 py-5">
+                      <dd className="font-heavy text-2xl text-ink"><CountUp value={stat.value} decimals={stat.decimals ?? 0} />{stat.suffix}</dd>
+                      <dt className="mt-1 text-xs text-ink/65">{c(stat, 'label')}</dt>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+            )}
           </div>
         </section>
 
-        {/* ---------- IELTS RESULTS (demo data, editable in the admin panel) ---------- */}
-        <section id="results" className="section relative overflow-hidden bg-navy-950">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-0 bg-grid opacity-60" style={{ backgroundSize: '72px 72px' }} />
-            <div className="absolute right-0 top-1/4 h-96 w-96 animate-drift rounded-full bg-violet-600/20 blur-[120px]" />
-          </div>
-          <div className="container-tj relative">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-              <Reveal className="max-w-2xl">
-                <p className="eyebrow-dark">{page.resultsBlock.eyebrow}</p>
-                <h2 className="mt-5 text-display-sm text-white sm:text-[3rem] sm:leading-[1.05]">{page.resultsBlock.title}</h2>
-                <p className="mt-4 text-lg leading-relaxed text-navy-200">{page.resultsBlock.subtitle}</p>
-              </Reveal>
-              <Reveal>
-                <div className="glass rounded-panel px-8 py-6 text-center">
-                  <p className="font-display text-[4.5rem] font-extrabold leading-none text-white">{bestBand.toFixed(1)}</p>
-                  <p className="mt-2 text-sm text-navy-300">{t('msg.highestBand')}</p>
-                </div>
-              </Reveal>
+        {/* ---------- PRICES (cream, continued) ---------- */}
+        {Boolean(plans.length) && (
+          <section id="prices" className="border-t border-ink/10 bg-cream pb-20 pt-16 text-ink sm:pb-28">
+            <div className="container-tj">
+              <Reveal><h2 className={cn(sectionTitle, 'text-ink')}>{t('landing.pricesTitle')}</h2></Reveal>
+              <div className="mt-10 grid gap-5 md:grid-cols-3">
+                {plans.map((plan) => {
+                  const featured = plan === popular;
+                  return (
+                    <Reveal key={plan.id}>
+                      <article className={cn('relative flex h-full flex-col rounded-[1.25rem] p-6',
+                        featured ? 'bg-ink text-white' : 'border-2 border-ink bg-white text-ink')}>
+                        {featured && (
+                          <span className="absolute -top-3 right-5 rotate-3 rounded-full bg-coral px-3 py-1 text-xs font-bold text-ink">
+                            {t('landing.mostPopular')}
+                          </span>
+                        )}
+                        <p className={cn('text-sm font-semibold', featured ? 'text-sun' : 'text-ink')}>{c(plan, 'name')}</p>
+                        <p className={cn('mt-3 font-heavy text-3xl', featured ? 'text-white' : 'text-ink')}>
+                          {Number(plan.pricePerMonth).toLocaleString('en-US')}
+                        </p>
+                        <p className="mt-1 text-xs opacity-60">{t('landing.sumPerMonth')}</p>
+                        <ul className="mt-6 flex-1 space-y-2 text-sm">
+                          {plan.lessonsPerWeek && <li>{t('landing.timesPerWeek', { count: plan.lessonsPerWeek })}</li>}
+                          <li>{plan.schedule}</li>
+                          <li>{plan.duration} · {plan.lessonsCount} {t('landing.lessonsLabel').toLowerCase()}</li>
+                          <li>{plan.level}</li>
+                        </ul>
+                        <button type="button" onClick={() => pickCourse(plan.name)}
+                          className={cn('mt-6', featured ? 'btn-sun' : 'btn-ink')}>{t('landing.joinCourse')}</button>
+                      </article>
+                    </Reveal>
+                  );
+                })}
+              </div>
             </div>
+          </section>
+        )}
 
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {page.results.map((result) => (
-                <Reveal key={result.id}>
-                  <article className="glass h-full rounded-panel p-6 transition duration-300 hover:-translate-y-1">
-                    <div className="flex items-center justify-between">
-                      <Avatar name={result.studentName} size="h-12 w-12 text-sm" />
-                      <p className="font-display text-4xl font-extrabold text-white">{result.overall.toFixed(1)}</p>
+        {/* ---------- IELTS RESULTS ---------- */}
+        <section id="results" className="section">
+          <div className="container-tj">
+            <Reveal className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{page.resultsBlock.eyebrow}</p>
+              <h2 className={cn(sectionTitle, 'mt-4 text-white')}>{page.resultsBlock.title}</h2>
+              <p className="mt-4 leading-relaxed text-white/60">{page.resultsBlock.subtitle}</p>
+            </Reveal>
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {page.results.map((result, index) => (
+                <Reveal key={result.id} delay={(index % 4) * 0.05}>
+                  <article className="h-full rounded-[1.25rem] border border-white/10 bg-ink-2 p-5">
+                    <div className="flex items-start justify-between">
+                      <Avatar name={result.studentName} size="h-11 w-11 text-sm" />
+                      <p className="font-heavy text-4xl text-sun">{result.overall.toFixed(1)}</p>
                     </div>
-                    <h3 className="mt-4 font-display text-lg font-semibold text-white">{result.studentName}</h3>
-                    <p className="text-sm text-navy-300">{result.startLevel} → {result.overall.toFixed(1)} · {result.monthsStudied} {t('landing.monthsLabel')}</p>
-                    <dl className="mt-5 space-y-2.5">
-                      {[['listening', 'Listening'], ['reading', 'Reading'], ['writing', 'Writing'], ['speaking', 'Speaking']].map(([key, label]) => (
-                        <div key={key}>
-                          <div className="flex justify-between text-xs text-navy-300">
-                            <dt>{label}</dt><dd className="font-semibold text-white">{result[key].toFixed(1)}</dd>
-                          </div>
-                          <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/10">
-                            <span className="block h-full rounded-full bg-gradient-to-r from-electric-400 to-violet-400" style={{ width: `${(result[key] / 9) * 100}%` }} />
-                          </div>
+                    <h3 className="mt-4 font-heavy text-base text-white">{result.studentName}</h3>
+                    <p className="text-xs text-white/55">{result.startLevel} → {result.overall.toFixed(1)} · {result.monthsStudied} {t('landing.monthsLabel')}</p>
+                    <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
+                      {[['listening', 'L'], ['reading', 'R'], ['writing', 'W'], ['speaking', 'S']].map(([key, label]) => (
+                        <div key={key} className="rounded-lg bg-white/5 py-2">
+                          <dt className="text-[0.65rem] text-white/50">{label}</dt>
+                          <dd className="text-sm font-bold text-white">{result[key].toFixed(1)}</dd>
                         </div>
                       ))}
                     </dl>
@@ -965,33 +958,32 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* ---------- STUDENT STORIES ---------- */}
-        <section id="stories" className="section bg-mist">
+        {/* ---------- TEACHERS ---------- */}
+        <section id="teachers" className="section pt-0">
           <div className="container-tj">
             <Reveal className="max-w-2xl">
-              <p className="eyebrow">{t('landing.storiesEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.storiesTitle')}</h2>
-              <p className="mt-4 text-lg leading-relaxed text-navy-500">{t('landing.demoNotice')}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{t('landing.teachersEyebrow')}</p>
+              <h2 className={cn(sectionTitle, 'mt-4 text-white')}>{t('landing.teachersTitle')}</h2>
             </Reveal>
-            <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {page.testimonials.map((item) => (
-                <Reveal key={item.id}>
-                  <article className="flex h-full flex-col rounded-panel border border-navy-100 bg-white p-7 shadow-soft">
-                    <div className="flex gap-0.5 text-amber-400">
-                      {Array.from({ length: item.rating ?? 5 }).map((_, index) => <Star key={index} size={15} fill="currentColor" />)}
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {page.teachers.map((teacher, index) => (
+                <Reveal key={teacher.id} delay={(index % 4) * 0.05}>
+                  <article className="group relative h-full overflow-hidden rounded-[1.25rem] border border-white/10 bg-ink-2 p-5 transition hover:border-sun/60">
+                    <div className="flex items-start justify-between">
+                      <Avatar name={teacher.fullName} src={teacher.avatar} size="h-16 w-16 text-lg" />
+                      <span className="rounded-full bg-sun px-2.5 py-1 text-xs font-bold text-ink">IELTS {teacher.ieltsScore.toFixed(1)}</span>
                     </div>
-                    <blockquote className="mt-4 flex-1 text-[0.98rem] leading-relaxed text-navy-700">{c(item, 'quote')}</blockquote>
-                    <div className="mt-6 flex items-center gap-3 border-t border-navy-100 pt-5">
-                      <Avatar name={item.name} size="h-14 w-14 text-base" />
-                      <div className="min-w-0">
-                        <p className="font-semibold text-navy-900">{item.name}</p>
-                        <p className="truncate text-sm text-navy-500">{item.course}</p>
-                      </div>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2 text-sm">
-                      <span className="badge bg-navy-100 text-navy-600">{t('landing.before')} {item.levelBefore}</span>
-                      <span className="text-navy-300">→</span>
-                      <span className="badge bg-action-gradient text-white">IELTS {Number(item.ieltsScore).toFixed(1)}</span>
+                    <h3 className="mt-4 font-heavy text-base text-white">{teacher.fullName}</h3>
+                    <p className="text-sm text-coral">{c(teacher, 'position')}</p>
+                    <p className="mt-3 text-xs text-white/60">{teacher.experience} {t('landing.yearsTeaching')} · {teacher.studentsCount ?? 0} {t('landing.studentsEnrolled')}</p>
+                    {teacher.rating ? (
+                      <p className="mt-1 flex items-center gap-1 text-xs text-sun">
+                        <Star size={12} fill="currentColor" />{teacher.rating}<span className="text-white/45">({teacher.reviewCount})</span>
+                      </p>
+                    ) : null}
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-sun p-5 text-sm leading-relaxed text-ink opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                      <p className="font-bold">{teacher.specialization}</p>
+                      <p className="mt-1.5 text-ink/80">{c(teacher, 'bio')}</p>
                     </div>
                   </article>
                 </Reveal>
@@ -1000,37 +992,27 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* ---------- TEACHERS ---------- */}
-        <section id="teachers" className="section">
+        {/* ---------- STUDENT STORIES (cream) ---------- */}
+        <section id="stories" className="section rounded-[2.5rem] bg-cream text-ink">
           <div className="container-tj">
             <Reveal className="max-w-2xl">
-              <p className="eyebrow">{t('landing.teachersEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.teachersTitle')}</h2>
+              <h2 className={cn(sectionTitle, 'text-ink')}>{t('landing.storiesTitle')}</h2>
+              <p className="mt-4 text-sm text-ink/60">{t('landing.demoNotice')}</p>
             </Reveal>
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {page.teachers.map((teacher) => (
-                <Reveal key={teacher.id}>
-                  <article className="group relative h-full overflow-hidden rounded-panel border border-navy-100 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-                    <div className="flex items-start justify-between">
-                      <Avatar name={teacher.fullName} src={teacher.avatar} size="h-20 w-20 text-xl" />
-                      <span className="badge bg-action-gradient text-white">IELTS {teacher.ieltsScore.toFixed(1)}</span>
-                    </div>
-                    <h3 className="mt-4 font-display text-lg font-semibold text-navy-900">{teacher.fullName}</h3>
-                    <p className="text-sm font-medium text-electric-600">{c(teacher, 'position')}</p>
-                    <p className="mt-4 text-sm text-navy-600">{teacher.experience} {t('landing.yearsTeaching')}</p>
-                    <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-navy-500">
-                      <span>{teacher.studentsCount ?? 0} {t('landing.studentsEnrolled')}</span>
-                      {teacher.rating
-                        ? <span className="flex items-center gap-1 text-amber-600">
-                            <Star size={13} fill="currentColor" />{teacher.rating}
-                            <span className="text-navy-400">({teacher.reviewCount})</span>
-                          </span>
-                        : <span className="text-navy-400">{t('landing.noRatingYet')}</span>}
-                    </div>
-                    <p className="text-sm text-navy-600">{(teacher.languages ?? []).join(', ')}</p>
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-navy-950/95 p-6 text-sm leading-relaxed text-navy-100 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <p className="font-semibold text-white">{teacher.specialization}</p>
-                      <p className="mt-2 text-navy-300">{c(teacher, 'bio')}</p>
+            <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {page.testimonials.map((item, index) => (
+                <Reveal key={item.id} delay={(index % 3) * 0.05}>
+                  <article className={cn('flex h-full flex-col rounded-[1.25rem] p-6',
+                    index % 3 === 1 ? 'bg-sun' : 'border-2 border-ink bg-white')}>
+                    <p className="font-heavy text-4xl leading-none text-coral">“</p>
+                    <blockquote className="mt-2 flex-1 leading-relaxed text-ink/85">{c(item, 'quote')}</blockquote>
+                    <div className="mt-6 flex items-center gap-3 border-t border-ink/15 pt-4">
+                      <Avatar name={item.name} size="h-11 w-11 text-sm" />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-ink">{item.name}</p>
+                        <p className="truncate text-xs text-ink/60">{item.course}</p>
+                      </div>
+                      <span className="rounded-full bg-ink px-2.5 py-1 text-xs font-bold text-sun">{item.levelBefore} → {Number(item.ieltsScore).toFixed(1)}</span>
                     </div>
                   </article>
                 </Reveal>
@@ -1040,20 +1022,18 @@ function LandingPage() {
         </section>
 
         {/* ---------- HOW IT WORKS ---------- */}
-        <section className="section bg-mist">
+        <section className="section">
           <div className="container-tj">
             <Reveal className="max-w-2xl">
-              <p className="eyebrow">{t('landing.stepsEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.stepsTitle')}</h2>
+              <h2 className={cn(sectionTitle, 'text-white')}>{t('landing.stepsTitle')}</h2>
             </Reveal>
-            <div className="relative mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <span aria-hidden="true" className="absolute left-0 right-0 top-9 hidden h-px bg-gradient-to-r from-electric-200 via-violet-200 to-transparent lg:block" />
+            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {page.steps.map((step, index) => (
-                <Reveal key={step.id}>
-                  <div className="relative">
-                    <span className="relative z-10 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-2xl border border-navy-100 bg-white font-display text-2xl font-bold text-electric-600 shadow-soft">{index + 1}</span>
-                    <h3 className="mt-5 font-display text-lg font-semibold text-navy-900">{c(step, 'title')}</h3>
-                    <p className="mt-2 max-w-[36ch] text-sm leading-relaxed text-navy-600">{c(step, 'text')}</p>
+                <Reveal key={step.id} delay={index * 0.05}>
+                  <div className="h-full rounded-[1.25rem] border border-white/10 bg-ink-2 p-6">
+                    <span className="font-heavy text-5xl text-sun">{String(index + 1).padStart(2, '0')}</span>
+                    <h3 className="mt-6 font-heavy text-lg text-white">{c(step, 'title')}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-white/60">{c(step, 'text')}</p>
                   </div>
                 </Reveal>
               ))}
@@ -1062,23 +1042,27 @@ function LandingPage() {
         </section>
 
         {/* ---------- EVENTS ---------- */}
-        <section id="events" className="section">
+        <section id="events" className="section pt-0">
           <div className="container-tj">
             <Reveal className="max-w-2xl">
-              <p className="eyebrow">{t('landing.eventsEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.eventsTitle')}</h2>
+              <h2 className={cn(sectionTitle, 'text-white')}>{t('landing.eventsTitle')}</h2>
             </Reveal>
-            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {page.events.slice(0, 6).map((event) => (
-                <Reveal key={event.id}>
-                  <article className="flex h-full flex-col rounded-panel border border-navy-100 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-electric-200 hover:shadow-lift">
-                    <span className="badge w-fit bg-electric-50 text-electric-700">{event.type}</span>
-                    <h3 className="mt-4 font-display text-lg font-semibold text-navy-900">{event.title}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-navy-600">{event.description}</p>
-                    <dl className="mt-5 space-y-2 border-t border-navy-100 pt-4 text-sm text-navy-600">
-                      <div className="flex items-center gap-2"><CalendarDays size={14} className="text-navy-400" /><dd>{formatDate(event.date)} · {event.time}</dd></div>
-                      <div className="flex items-center gap-2"><MapPin size={14} className="text-navy-400" /><dd>{event.location}</dd></div>
-                    </dl>
+            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {page.events.slice(0, 6).map((event, index) => (
+                <Reveal key={event.id} delay={(index % 3) * 0.05}>
+                  <article className="flex h-full gap-5 rounded-[1.25rem] border border-white/10 bg-ink-2 p-5">
+                    <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-xl bg-coral text-ink">
+                      <span className="font-heavy text-2xl leading-none">{event.date.slice(8, 10)}</span>
+                      <span className="text-[0.65rem] font-bold">{event.date.slice(5, 7)}.{event.date.slice(2, 4)}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[0.7rem] font-bold uppercase tracking-wider text-sun">{event.type}</span>
+                      <h3 className="mt-1 font-heavy text-base text-white">{event.title}</h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-white/60">{event.description}</p>
+                      <p className="mt-3 flex items-center gap-1.5 text-xs text-white/50">
+                        <Clock size={12} />{event.time}<span className="mx-1">·</span><MapPin size={12} />{event.location}
+                      </p>
+                    </div>
                   </article>
                 </Reveal>
               ))}
@@ -1088,112 +1072,69 @@ function LandingPage() {
 
         {/* ---------- BRANCHES (Olmaliq) ---------- */}
         {Boolean(page.branches?.length) && (
-          <section id="branches" className="section relative overflow-hidden bg-navy-950">
-            {/* Same quiet backdrop as the hero, so the section reads as part of
-                the same place rather than a bolted-on block. */}
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-              <div className="absolute inset-0 bg-grid opacity-50" style={{ backgroundSize: '72px 72px' }} />
-              <div className="absolute -right-32 top-0 h-[28rem] w-[28rem] rounded-full bg-electric-600/20 blur-[130px]" />
-              <div className="absolute -left-28 bottom-0 h-[24rem] w-[24rem] rounded-full bg-violet-600/20 blur-[120px]" />
-            </div>
-
-            <div className="container-tj relative">
+          <section id="branches" className="section bg-sun text-ink">
+            <div className="container-tj">
               <Reveal className="max-w-2xl">
-                <p className="eyebrow-dark"><MapPin size={14} />{page.settings?.branchesTitle || t('landing.branchesEyebrow')}</p>
-                <h2 className="mt-5 text-display-sm text-white sm:text-[3rem] sm:leading-[1.05]">{t('landing.branchesTitle')}</h2>
-                <p className="mt-4 text-lg leading-relaxed text-navy-300">
-                  {page.settings?.branchesSubtitle || t('landing.branchesSubtitle')}
-                </p>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink/70">{page.settings?.branchesTitle || t('landing.branchesEyebrow')}</p>
+                <h2 className={cn(sectionTitle, 'mt-4 text-ink')}>{t('landing.branchesTitle')}</h2>
+                <p className="mt-4 leading-relaxed text-ink/70">{page.settings?.branchesSubtitle || t('landing.branchesSubtitle')}</p>
               </Reveal>
 
               <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {page.branches.map((branch, index) => (
                   <Reveal key={branch.id} delay={index * 0.08}>
-                    {/* The photo is the card. Text sits on a gradient that rises
-                        from the bottom, so it stays readable whatever the image. */}
-                    <article className="group relative flex h-full min-h-[30rem] flex-col overflow-hidden rounded-panel">
-                      {branch.image ? (
-                        <img src={branch.image} alt={c(branch, 'name')} loading="lazy"
-                          className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-                      ) : (
-                        <div className="absolute inset-0 bg-brand-gradient" aria-hidden="true" />
+                    <article className="flex h-full flex-col overflow-hidden rounded-[1.25rem] bg-ink text-white">
+                      {branch.image && (
+                        <img src={branch.image} alt={c(branch, 'name')} loading="lazy" className="aspect-[16/10] w-full object-cover" />
                       )}
-
-                      <div aria-hidden="true"
-                        className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/70 to-navy-950/10" />
-
-                      {/* Branch number: a quiet way to tell the three apart. */}
-                      <span className="relative m-6 w-fit rounded-full border border-white/25 bg-white/10 px-3 py-1 font-display text-xs font-bold tracking-widest text-white backdrop-blur">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-
-                      <div className="relative mt-auto p-6">
-                        <h3 className="font-display text-2xl font-bold leading-tight text-white sm:text-[1.75rem]">
-                          {c(branch, 'name')}
-                        </h3>
+                      <div className="flex flex-1 flex-col p-6">
+                        <span className="font-heavy text-4xl text-sun">{String(index + 1).padStart(2, '0')}</span>
+                        <h3 className="mt-4 font-heavy text-xl text-white">{c(branch, 'name')}</h3>
 
                         {c(branch, 'address') ? (
-                          <p className="mt-3 flex gap-2.5 text-sm leading-relaxed text-navy-200">
-                            <MapPin size={15} className="mt-0.5 shrink-0 text-electric-400" />
+                          <p className="mt-3 flex gap-2.5 text-sm leading-relaxed text-white/80">
+                            <MapPin size={15} className="mt-0.5 shrink-0 text-coral" />
                             <span>{c(branch, 'address')}</span>
                           </p>
                         ) : (
-                          <p className="mt-3 rounded-xl border border-amber-300/30 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
-                            {t('landing.branchSetup')}
-                          </p>
+                          <p className="mt-3 text-xs text-sun">{t('landing.branchSetup')}</p>
                         )}
 
-                        <dl className="mt-3 space-y-2 text-sm text-navy-300">
+                        <dl className="mt-3 flex-1 space-y-2 text-sm text-white/65">
                           {c(branch, 'landmark') && (
-                            <div className="flex gap-2.5">
-                              <Navigation size={14} className="mt-0.5 shrink-0 text-navy-400" />
-                              <dd>{c(branch, 'landmark')}</dd>
-                            </div>
+                            <div className="flex gap-2.5"><Navigation size={14} className="mt-0.5 shrink-0" /><dd>{c(branch, 'landmark')}</dd></div>
                           )}
                           {branch.phone && (
-                            <div className="flex gap-2.5">
-                              <Phone size={14} className="mt-0.5 shrink-0 text-navy-400" />
-                              <dd>
-                                <a href={`tel:${branch.phone.replace(/\s/g, '')}`} className="transition hover:text-white">
-                                  {branch.phone}
-                                </a>
-                              </dd>
+                            <div className="flex gap-2.5"><Phone size={14} className="mt-0.5 shrink-0" />
+                              <dd><a href={`tel:${branch.phone.replace(/\s/g, '')}`} className="hover:text-white">{branch.phone}</a></dd>
                             </div>
                           )}
                           {c(branch, 'workingHours') && (
-                            <div className="flex gap-2.5">
-                              <Clock size={14} className="mt-0.5 shrink-0 text-navy-400" />
-                              <dd>{c(branch, 'workingHours')}</dd>
-                            </div>
+                            <div className="flex gap-2.5"><Clock size={14} className="mt-0.5 shrink-0" /><dd>{c(branch, 'workingHours')}</dd></div>
                           )}
                         </dl>
 
                         {branch.video && (
                           <a href={branch.video} target="_blank" rel="noreferrer"
-                            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-electric-300 transition hover:text-white">
+                            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-sun hover:text-white">
                             <PlayCircle size={15} />{t('landing.watchVideo')}
                           </a>
                         )}
 
-                        {/* Map links render only when an admin has entered a real
-                            one. Our own pin icons — not the providers' logos. */}
-                        <div className="mt-5 flex flex-wrap gap-2 border-t border-white/15 pt-5">
-                          {branch.googleMaps && (
-                            <a href={branch.googleMaps} target="_blank" rel="noreferrer"
-                              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3.5 py-2 text-sm font-medium text-white backdrop-blur transition hover:border-white/40 hover:bg-white/20">
-                              <MapPin size={15} className="text-electric-300" />{t('landing.googleMaps')}
-                            </a>
-                          )}
-                          {branch.yandexMaps && (
-                            <a href={branch.yandexMaps} target="_blank" rel="noreferrer"
-                              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3.5 py-2 text-sm font-medium text-white backdrop-blur transition hover:border-white/40 hover:bg-white/20">
-                              <Navigation size={15} className="text-amber-300" />{t('landing.yandexMaps')}
-                            </a>
-                          )}
-                          {!branch.googleMaps && !branch.yandexMaps && (
-                            <span className="text-xs text-navy-400">{t('landing.branchSetup')}</span>
-                          )}
-                        </div>
+                        {(branch.googleMaps || branch.yandexMaps) && (
+                          <div className="mt-5 flex flex-wrap gap-2 border-t border-white/15 pt-5">
+                            {branch.googleMaps && (
+                              <a href={branch.googleMaps} target="_blank" rel="noreferrer" className="btn-sun btn-sm">
+                                <MapPin size={14} />{t('landing.googleMaps')}
+                              </a>
+                            )}
+                            {branch.yandexMaps && (
+                              <a href={branch.yandexMaps} target="_blank" rel="noreferrer" className="btn-outline-light btn-sm">
+                                <Navigation size={14} />{t('landing.yandexMaps')}
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </article>
                   </Reveal>
@@ -1205,41 +1146,36 @@ function LandingPage() {
 
         {/* ---------- MEDIA / SCHOOL LIFE ---------- */}
         {Boolean(page.media?.length) && (
-          <section id="media" className="section bg-mist">
+          <section id="media" className="section">
             <div className="container-tj">
               <Reveal className="max-w-2xl">
-                <p className="eyebrow"><Video size={14} />{page.settings?.mediaTitle || t('landing.mediaEyebrow')}</p>
-                <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.mediaTitle')}</h2>
-                {page.settings?.mediaSubtitle && (
-                  <p className="mt-4 text-lg leading-relaxed text-navy-500">{page.settings.mediaSubtitle}</p>
-                )}
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-sun">{page.settings?.mediaTitle || t('landing.mediaEyebrow')}</p>
+                <h2 className={cn(sectionTitle, 'mt-4 text-white')}>{t('landing.mediaTitle')}</h2>
+                {page.settings?.mediaSubtitle && <p className="mt-4 leading-relaxed text-white/60">{page.settings.mediaSubtitle}</p>}
               </Reveal>
 
-              <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {page.media.slice(0, 9).map((post, index) => (
                   <Reveal key={post.id} delay={(index % 3) * 0.08}>
                     <button type="button" onClick={() => setMediaPost(post)}
-                      className="group relative block h-full w-full overflow-hidden rounded-panel border border-navy-100 bg-white text-left shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-                      <div className="relative aspect-[4/3] overflow-hidden bg-navy-100">
+                      className="group block h-full w-full overflow-hidden rounded-[1.25rem] border border-white/10 bg-ink-2 text-left transition hover:border-sun/60">
+                      <div className="relative aspect-[4/3] overflow-hidden bg-ink">
                         {post.image ? (
-                          <img src={post.image} alt={post.title} loading="lazy"
-                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                          <img src={post.image} alt={post.title} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                         ) : (
-                          <span className="flex h-full w-full items-center justify-center bg-brand-gradient" aria-hidden="true">
-                            <Video size={28} className="text-white/70" />
-                          </span>
+                          <span className="flex h-full w-full items-center justify-center bg-coral" aria-hidden="true"><Video size={28} className="text-ink/60" /></span>
                         )}
                         {post.video && (
-                          <span className="absolute inset-0 flex items-center justify-center bg-navy-950/30" aria-hidden="true">
+                          <span className="absolute inset-0 flex items-center justify-center bg-ink/30" aria-hidden="true">
                             <PlayCircle size={44} className="text-white drop-shadow" />
                           </span>
                         )}
-                        <span className="absolute left-3 top-3 badge bg-white/90 text-navy-700">{post.category}</span>
+                        <span className="absolute left-3 top-3 rounded-full bg-sun px-2.5 py-1 text-xs font-bold text-ink">{post.category}</span>
                       </div>
                       <div className="p-5">
-                        <h3 className="font-display text-base font-semibold text-navy-900">{c(post, 'title')}</h3>
-                        <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-navy-500">{c(post, 'description')}</p>
-                        <p className="mt-3 text-xs text-navy-400">{formatDate(post.date)}</p>
+                        <h3 className="font-heavy text-base text-white">{c(post, 'title')}</h3>
+                        <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-white/60">{c(post, 'description')}</p>
+                        <p className="mt-3 text-xs text-white/40">{formatDate(post.date)}</p>
                       </div>
                     </button>
                   </Reveal>
@@ -1249,25 +1185,24 @@ function LandingPage() {
           </section>
         )}
 
-        {/* ---------- FAQ ---------- */}
-        <section id="faq" className="section bg-mist">
+        {/* ---------- FAQ (cream) ---------- */}
+        <section id="faq" className="section rounded-[2.5rem] bg-cream text-ink">
           <div className="container-tj grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <Reveal className="lg:sticky lg:top-28">
-              <p className="eyebrow">{t('landing.faqEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm sm:text-[3rem] sm:leading-[1.05]">{t('landing.faqTitle')}</h2>
-              <p className="mt-5 max-w-[42ch] leading-relaxed text-navy-600">{t('landing.faqHelp')}</p>
+              <h2 className={cn(sectionTitle, 'text-ink')}>{t('landing.faqTitle')}</h2>
+              <p className="mt-5 max-w-[42ch] leading-relaxed text-ink/70">{t('landing.faqHelp')}</p>
             </Reveal>
             <Reveal>
-              <div className="divide-y divide-navy-100 overflow-hidden rounded-panel border border-navy-100 bg-white">
+              <div className="space-y-3">
                 {page.faq.map((item, index) => (
-                  <details key={item.id} className="group" open={index === 0}>
-                    <summary className="flex cursor-pointer items-center justify-between gap-6 px-6 py-5 transition hover:bg-mist">
-                      <span className="font-display text-base font-semibold text-navy-900 sm:text-lg">{c(item, 'question')}</span>
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-navy-200 text-navy-500 transition group-open:rotate-45 group-open:border-electric-500 group-open:bg-electric-500 group-open:text-white">
+                  <details key={item.id} className="group rounded-[1.25rem] border-2 border-ink bg-white open:bg-sun" open={index === 0}>
+                    <summary className="flex cursor-pointer items-center justify-between gap-6 px-5 py-4">
+                      <span className="font-heavy text-sm text-ink sm:text-base">{c(item, 'question')}</span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink text-sun transition group-open:rotate-45">
                         <Plus size={16} />
                       </span>
                     </summary>
-                    <p className="max-w-[62ch] px-6 pb-6 leading-relaxed text-navy-600">{c(item, 'answer')}</p>
+                    <p className="max-w-[62ch] px-5 pb-5 leading-relaxed text-ink/80">{c(item, 'answer')}</p>
                   </details>
                 ))}
               </div>
@@ -1275,61 +1210,61 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* ---------- CALL TO ACTION ---------- */}
-        <section className="section">
-          <div className="container-tj">
+        {/* ---------- FIRST LESSON FREE + SIGN-UP ---------- */}
+        <section id="contact" className="section">
+          <div className="container-tj grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <Reveal>
-              <div className="relative overflow-hidden rounded-panel bg-brand-gradient px-8 py-16 text-center sm:px-16 sm:py-20">
-                <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-                  <div className="absolute inset-0 bg-grid opacity-50" style={{ backgroundSize: '56px 56px' }} />
-                  <div className="absolute -left-16 top-0 h-72 w-72 animate-drift rounded-full bg-electric-500/30 blur-[100px]" />
-                </div>
-                <div className="relative mx-auto max-w-2xl">
-                  <h2 className="text-display-sm text-white sm:text-[3rem] sm:leading-[1.05]">{c(page.cta, 'title')}</h2>
-                  <p className="mx-auto mt-5 max-w-[52ch] text-lg leading-relaxed text-navy-200">{c(page.cta, 'subtitle')}</p>
-                  <Link to="/register" className="btn-primary mt-9">{c(page.cta, 'buttonLabel')}<ArrowRight size={17} /></Link>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ---------- CONTACT ---------- */}
-        <section id="contact" className="section bg-navy-950">
-          <div className="container-tj grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <Reveal>
-              <p className="eyebrow-dark">{t('landing.contactEyebrow')}</p>
-              <h2 className="mt-5 text-display-sm text-white sm:text-[3rem] sm:leading-[1.05]">{page.contact.title}</h2>
-              <p className="mt-4 max-w-[58ch] text-lg leading-relaxed text-navy-300">{page.contact.subtitle}</p>
-              <dl className="mt-10 space-y-5">
+              <h2 className="font-heavy text-[3rem] leading-[1] text-white sm:text-[4.5rem]">
+                {t('landing.finalLead')}<br /><span className="text-sun">{t('landing.finalMark')}</span>
+              </h2>
+              <p className="mt-6 max-w-[46ch] leading-relaxed text-white/75">{t('landing.finalHint')}</p>
+              <dl className="mt-10 space-y-4">
                 {[[MapPin, t('common.address'), page.contact.address], [Phone, t('common.phone'), page.contact.phone],
                   [Mail, t('common.email'), page.contact.email], [Clock, t('common.workingHours'), page.contact.workingHours]].map(([Icon, label, value]) => (
                   <div key={label} className="flex gap-4">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-electric-300"><Icon size={18} /></span>
-                    <div><dt className="text-sm text-navy-400">{label}</dt><dd className="mt-0.5 font-medium text-white">{value}</dd></div>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-2 text-sun"><Icon size={17} /></span>
+                    <div><dt className="text-xs text-white/50">{label}</dt><dd className="mt-0.5 text-sm font-medium text-white">{value}</dd></div>
                   </div>
                 ))}
               </dl>
             </Reveal>
 
             <Reveal>
-              <form onSubmit={sendContact} noValidate className="rounded-panel bg-white p-7 shadow-lift sm:p-9">
-                <h3 className="font-display text-xl font-semibold text-navy-900">{t('landing.bookFree')}</h3>
-                <p className="mt-1.5 text-sm text-navy-500">{t('landing.bookFreeHint')}</p>
-                <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                  <Field label={t('common.fullName')} name="fullName" placeholder={t('form.egName')} value={contactForm.fullName}
+              <form onSubmit={sendContact} noValidate className="rounded-[1.5rem] bg-ink-2 p-6 sm:p-8">
+                <label className="block">
+                  <span className="mb-1.5 block text-xs font-semibold text-white/80">{t('common.fullName')}</span>
+                  <input className="input-dark" name="fullName" placeholder={t('form.egName')} value={contactForm.fullName}
                     onChange={(e) => setContactForm({ ...contactForm, fullName: e.target.value })} />
-                  <Field label={t('common.phone')} name="phone" placeholder="+998 90 123 45 67" value={contactForm.phone}
+                </label>
+                <label className="mt-5 block">
+                  <span className="mb-1.5 block text-xs font-semibold text-white/80">{t('common.phone')}</span>
+                  <input className="input-dark" name="phone" type="tel" placeholder="+998 90 123 45 67" value={contactForm.phone}
                     onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} />
-                  <Field label={t('common.email')} name="email" type="email" placeholder="you@example.com" value={contactForm.email}
-                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} />
-                  <Field label={t('common.course')} name="course" as="select" value={contactForm.course}
-                    options={[{ value: '', label: t('landing.notSureYet') }, ...page.courses.map((c) => ({ value: c.name, label: c.name }))]}
-                    onChange={(e) => setContactForm({ ...contactForm, course: e.target.value })} />
-                  <Field className="sm:col-span-2" label={t('common.message')} name="message" as="textarea" rows={3} value={contactForm.message}
+                </label>
+                <fieldset className="mt-5">
+                  <legend className="mb-2 text-xs font-semibold text-white/80">{t('landing.chosenCourse')}</legend>
+                  <div className="flex flex-wrap gap-2">
+                    {page.courses.map((course) => {
+                      const chosen = contactForm.course === course.name;
+                      return (
+                        <button key={course.id} type="button" aria-pressed={chosen}
+                          onClick={() => setContactForm({ ...contactForm, course: chosen ? '' : course.name })}
+                          className={cn('rounded-full border px-3.5 py-1.5 text-xs font-semibold transition',
+                            chosen ? 'border-sun bg-sun text-ink' : 'border-white/25 text-white/85 hover:border-sun')}>
+                          {c(course, 'name')}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+                <label className="mt-5 block">
+                  <span className="mb-1.5 block text-xs font-semibold text-white/80">{t('common.message')}</span>
+                  <textarea className="input-dark" name="message" rows={2} value={contactForm.message}
                     onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })} />
-                </div>
-                <Button type="submit" loading={sending} className="mt-6 w-full">{t('landing.sendRequest')}</Button>
+                </label>
+                <button type="submit" disabled={sending} className="btn-sun mt-6 w-full py-3.5 font-heavy">
+                  {sending && <Loader2 size={16} className="animate-spin" />}{t('landing.signUp')}
+                </button>
               </form>
             </Reveal>
           </div>
@@ -1337,35 +1272,26 @@ function LandingPage() {
       </main>
 
       {/* ---------- FOOTER ---------- */}
-      <footer className="border-t border-white/10 bg-navy-950 pb-10 pt-16">
-        <div className="container-tj">
-          <div className="grid gap-10 md:grid-cols-3">
-            <div>
-              <span className="font-display text-lg font-bold text-white">TJ Language School</span>
-              <p className="mt-4 max-w-[38ch] text-sm leading-relaxed text-navy-400">{c(page.footer, 'tagline')}</p>
-            </div>
-            <nav aria-label={t('field.links')}>
-              <h3 className="font-display text-sm font-semibold text-white">{t('landing.footerPages')}</h3>
-              <ul className="mt-4 space-y-2.5">
-                <li><a href="#courses" className="text-sm text-navy-400 hover:text-white">{t('landing.coursesEyebrow')}</a></li>
-                <li><a href="#teachers" className="text-sm text-navy-400 hover:text-white">{t('landing.teachersEyebrow')}</a></li>
-                <li><a href="#branches" className="text-sm text-navy-400 hover:text-white">{t('landing.branchesEyebrow')}</a></li>
-                <li><Link to="/register" className="text-sm text-navy-400 hover:text-white">{t('nav.register')}</Link></li>
-                <li><Link to="/login" className="text-sm text-navy-400 hover:text-white">{t('nav.login')}</Link></li>
-                <li><Link to="/request-status" className="text-sm text-navy-400 hover:text-white">{t('landing.checkRequest')}</Link></li>
-              </ul>
-            </nav>
-            <address className="space-y-2 text-sm not-italic text-navy-400">
-              <h3 className="font-display text-sm font-semibold text-white">{t('landing.footerFindUs')}</h3>
-              <p className="pt-2">{page.contact.address}</p>
-              <p>{page.contact.phone}</p>
-              <p>{page.contact.email}</p>
-            </address>
+      <footer className="border-t border-white/10 py-10">
+        <div className="container-tj flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+          <div>
+            <span className="font-heavy text-sm uppercase tracking-wide text-white">{page.settings?.brandName || 'TJ Language School'}</span>
+            <p className="mt-2 max-w-[40ch] text-xs leading-relaxed text-white/50">{c(page.footer, 'tagline')}</p>
           </div>
-          <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-navy-500 sm:flex-row sm:justify-between">
-            <p>{c(page.footer, 'copyright')}</p>
-            <p>{t('landing.demoNotice')}</p>
-          </div>
+          <nav aria-label={t('field.links')} className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+            <a href="#courses" className="text-white/60 hover:text-sun">{t('landing.coursesEyebrow')}</a>
+            <a href="#branches" className="text-white/60 hover:text-sun">{t('landing.branchesEyebrow')}</a>
+            <Link to="/register" className="text-white/60 hover:text-sun">{t('nav.register')}</Link>
+            <Link to="/login" className="text-white/60 hover:text-sun">{t('nav.login')}</Link>
+            <Link to="/request-status" className="text-white/60 hover:text-sun">{t('landing.checkRequest')}</Link>
+            {['telegram', 'instagram', 'youtube', 'facebook'].filter((key) => page.settings?.social?.[key]).map((key) => (
+              <a key={key} href={page.settings.social[key]} target="_blank" rel="noreferrer" className="capitalize text-sun underline underline-offset-2">{key}</a>
+            ))}
+          </nav>
+        </div>
+        <div className="container-tj mt-8 flex flex-col gap-2 border-t border-white/10 pt-5 text-[0.7rem] text-white/40 sm:flex-row sm:justify-between">
+          <p>{c(page.footer, 'copyright')}</p>
+          <p>{page.contact.address} · {page.contact.phone}</p>
         </div>
       </footer>
 
